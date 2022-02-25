@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option go_package = "github.com/Maddosaurus/gotp/gotp";
+
+package gotp;
+
+service gOTP {
+    rpc ListEntries(UUID) returns (stream OTPEntry);
+    rpc AddEntry(OTPEntry) returns (OTPEntry);
+}
+
+message UUID {
+    string uuid = 1;
+}
+
+message OTPEntry {
+    string uuid = 1;
+    string name = 2;
+    string secret_token = 3;
+}

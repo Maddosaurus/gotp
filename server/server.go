@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -10,6 +9,7 @@ import (
 
 	pb "github.com/Maddosaurus/gotp/gotp"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 var (
@@ -36,8 +36,25 @@ func (s *gOTPServer) AddEntry(ctx context.Context, newEntry *pb.OTPEntry) (*pb.O
 }
 
 func (s *gOTPServer) loadFeatures() {
-	if err := json.Unmarshal(exampleData, &s.savedEntries); err != nil {
-		log.Fatalf("Failed to load default features: %v", err)
+	s.savedEntries = []*pb.OTPEntry{
+		{
+			Type:        pb.OTPEntry_TOTP,
+			Uuid:        "1234",
+			Name:        "Site1",
+			SecretToken: "JBSWY3DPEHPK3PX3",
+		}, {
+			Type:        pb.OTPEntry_TOTP,
+			Uuid:        "45678",
+			Name:        "Twitch",
+			SecretToken: "123456asdabc",
+		}, {
+			Type:        pb.OTPEntry_HOTP,
+			Uuid:        "1234567dfcg",
+			Name:        "CustomSite",
+			SecretToken: "4S62BZNFXXSZLCRO",
+			Counter:     42,
+			UpdateTime:  timestamppb.Now(),
+		},
 	}
 }
 
@@ -61,18 +78,3 @@ func main() {
 		log.Fatalf("Failed to serve: %v", err)
 	}
 }
-
-// Example data to have something to serve right now
-var exampleData = []byte(`[{
-		"uuid": "123abc",
-		"name": "github",
-		"secret_token": "11111"
-	}, {
-		"uuid": "22223abc",
-		"name": "twitch",
-		"secret_token": "22222"
-	},{
-		"uuid": "333333abc",
-		"name": "google",
-		"secret_token": "33333 "
-	}]`)

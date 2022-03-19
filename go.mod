@@ -3,6 +3,7 @@ module github.com/Maddosaurus/gotp
 go 1.17
 
 require (
+	github.com/xlzd/gotp v0.0.0-20220110052318-fab697c03c2c
 	google.golang.org/grpc v1.44.0
 	google.golang.org/protobuf v1.27.1
 )

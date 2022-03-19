@@ -8,6 +8,7 @@ import (
 	"time"
 
 	pb "github.com/Maddosaurus/gotp/gotp"
+	otp "github.com/xlzd/gotp"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -33,6 +34,24 @@ func printEntries(client pb.GOTPClient, uuid *pb.UUID) {
 			log.Fatalf("%v.ListEntries(_) = _, %v", client, err)
 		}
 		log.Printf("Feature: uuid: %v, name: %v, secret_token: %v", entry.Uuid, entry.Name, entry.SecretToken)
+		if entry.Type == pb.OTPEntry_HOTP {
+			hotp := otp.NewDefaultHOTP(entry.SecretToken)
+			log.Printf("\tHOTP Mode - counter: %v", entry.Counter)
+			// FYI: This is the lookahead / skew window. This is configured at the server side!
+			// We don't have to do anything here, the server synchronizes the counter on its side.
+			// We basically increment it by 1 after a code generation event (e.g. user touch)
+			// This needs to be synced with the gOTP server, though!
+			log.Printf("\tHOTP: %v", hotp.At(1))
+			// log.Printf("\tHOTP: %v", hotp.At(2))
+			// log.Printf("\tHOTP: %v", hotp.At(3))
+			// log.Printf("\tHOTP: %v", hotp.At(4))
+			log.Printf("\tProvisioning URI: %v", hotp.ProvisioningUri("me", "gOTP", 0))
+			log.Printf("\tUpdate Time: %v", entry.UpdateTime.AsTime())
+		}
+		if entry.Uuid == "1234" {
+			totp := otp.NewDefaultTOTP(entry.SecretToken)
+			log.Printf("\tTOTP: %v", totp.Now())
+		}
 	}
 }
 

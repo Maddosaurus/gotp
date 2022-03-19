@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+
 option go_package = "github.com/Maddosaurus/gotp/gotp";
 
 package gotp;
@@ -14,7 +16,14 @@ message UUID {
 }
 
 message OTPEntry {
-    string uuid = 1;
-    string name = 2;
-    string secret_token = 3;
+    enum OTPType {
+        TOTP = 0;
+        HOTP = 1;
+    }
+    OTPType                   type         = 1;
+    string                    uuid         = 2;
+    string                    name         = 3;
+    string                    secret_token = 4;
+    uint64                    counter      = 5;
+    google.protobuf.Timestamp update_time  = 6;
 }

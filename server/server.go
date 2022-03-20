@@ -46,7 +46,7 @@ func (s *gOTPServer) loadFeatures() {
 			Type:        pb.OTPEntry_TOTP,
 			Uuid:        "45678",
 			Name:        "Twitch",
-			SecretToken: "123456asdabc",
+			SecretToken: "JBSWY3DPEHPK3PX4",
 		}, {
 			Type:        pb.OTPEntry_HOTP,
 			Uuid:        "1234567dfcg",

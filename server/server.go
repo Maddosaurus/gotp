@@ -35,6 +35,15 @@ func (s *gOTPServer) AddEntry(ctx context.Context, newEntry *pb.OTPEntry) (*pb.O
 	return newEntry, nil
 }
 
+func (s *gOTPServer) UpdateEntry(ctx context.Context, candidate *pb.OTPEntry) (*pb.OTPEntry, error) {
+	for i, entry := range s.savedEntries {
+		if entry.Uuid == candidate.Uuid {
+			s.savedEntries[i] = candidate
+		}
+	}
+	return candidate, nil
+}
+
 func (s *gOTPServer) loadFeatures() {
 	s.savedEntries = []*pb.OTPEntry{
 		{
@@ -42,17 +51,19 @@ func (s *gOTPServer) loadFeatures() {
 			Uuid:        "1234",
 			Name:        "Site1",
 			SecretToken: "JBSWY3DPEHPK3PX3",
+			UpdateTime:  timestamppb.Now(),
 		}, {
 			Type:        pb.OTPEntry_TOTP,
 			Uuid:        "45678",
 			Name:        "Twitch",
 			SecretToken: "JBSWY3DPEHPK3PX4",
+			UpdateTime:  timestamppb.Now(),
 		}, {
 			Type:        pb.OTPEntry_HOTP,
 			Uuid:        "1234567dfcg",
 			Name:        "CustomSite",
 			SecretToken: "4S62BZNFXXSZLCRO",
-			Counter:     42,
+			Counter:     1,
 			UpdateTime:  timestamppb.Now(),
 		},
 	}

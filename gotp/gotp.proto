@@ -9,6 +9,7 @@ package gotp;
 service gOTP {
     rpc ListEntries(UUID) returns (stream OTPEntry);
     rpc AddEntry(OTPEntry) returns (OTPEntry);
+    rpc UpdateEntry(OTPEntry) returns (OTPEntry);
 }
 
 message UUID {

@@ -16,49 +16,12 @@ import (
 	otp "github.com/xlzd/gotp"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 var (
 	serverAddr = flag.String("addr", "localhost:50051", "Server address in the format of host:port")
 )
-
-func printEntries(client pb.GOTPClient, uuid *pb.UUID) {
-	log.Printf("Getting all entries for UUID %v", uuid)
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	stream, err := client.ListEntries(ctx, uuid)
-	if err != nil {
-		log.Fatalf("%v.ListEntries(_) = _, %v", client, err)
-	}
-	for {
-		entry, err := stream.Recv()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			log.Fatalf("%v.ListEntries(_) = _, %v", client, err)
-		}
-		log.Printf("Feature: uuid: %v, name: %v, secret_token: %v", entry.Uuid, entry.Name, entry.SecretToken)
-		if entry.Type == pb.OTPEntry_HOTP {
-			hotp := otp.NewDefaultHOTP(entry.SecretToken)
-			log.Printf("\tHOTP Mode - counter: %v", entry.Counter)
-			// FYI: This is the lookahead / skew window. This is configured at the server side!
-			// We don't have to do anything here, the server synchronizes the counter on its side.
-			// We basically increment it by 1 after a code generation event (e.g. user touch)
-			// This needs to be synced with the gOTP server, though!
-			log.Printf("\tHOTP: %v", hotp.At(1))
-			// log.Printf("\tHOTP: %v", hotp.At(2))
-			// log.Printf("\tHOTP: %v", hotp.At(3))
-			// log.Printf("\tHOTP: %v", hotp.At(4))
-			log.Printf("\tProvisioning URI: %v", hotp.ProvisioningUri("me", "gOTP", 0))
-			log.Printf("\tUpdate Time: %v", entry.UpdateTime.AsTime())
-		}
-		if entry.Uuid == "1234" {
-			totp := otp.NewDefaultTOTP(entry.SecretToken)
-			log.Printf("\tTOTP: %v", totp.Now())
-		}
-	}
-}
 
 // TODO: Refactor?
 func getAllEntries(client pb.GOTPClient) []pb.OTPEntry {
@@ -82,15 +45,24 @@ func getAllEntries(client pb.GOTPClient) []pb.OTPEntry {
 	return entries
 }
 
-func printEntry(entry *pb.OTPEntry) {
+func printEntry(client pb.GOTPClient, entry *pb.OTPEntry) {
+	log.Printf("Entry: %v // Updated at: %v", entry.Name, entry.UpdateTime.AsTime())
 	if entry.Type == pb.OTPEntry_TOTP {
 		totp := otp.NewDefaultTOTP(entry.SecretToken)
-		log.Printf("%v \tTOTP: %v", entry.Name, totp.Now())
-		entry.Counter++ // FIXME: Update the counter on the server side ASAP!
+		log.Printf("TOTP: %v", totp.Now())
 	} else {
 		hotp := otp.NewDefaultHOTP(entry.SecretToken)
 		log.Printf("\tHOTP Mode - counter: %v", entry.Counter)
-		log.Printf("%v \tHOTP: %v", entry.Name, hotp.At(int(entry.Counter)))
+		log.Printf("HOTP: %v", hotp.At(int(entry.Counter)))
+		entry.Counter++
+		entry.UpdateTime = timestamppb.Now()
+		log.Printf("Updating Server side")
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		_, err := client.UpdateEntry(ctx, entry)
+		if err != nil {
+			log.Fatalf("%v.UpdateEntry(_) = _, %v", client, err)
+		}
 	}
 }
 
@@ -128,9 +100,48 @@ func printOTP(client pb.GOTPClient) {
 		}
 
 		ini, _ := strconv.Atoi(input)
-		printEntry(&entries[ini])
+		printEntry(client, &entries[ini])
 		break
 	}
+}
+
+func addEntry(client pb.GOTPClient) {
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Println("Entry Name:")
+	entry_name, _ := reader.ReadString('\n')
+	entry_name = strings.Replace(entry_name, "\n", "", -1)
+
+	fmt.Println("Seed:")
+	seed, _ := reader.ReadString('\n')
+	seed = strings.Replace(seed, "\n", "", -1)
+
+	new_entry := pb.OTPEntry{
+		Name:        entry_name,
+		SecretToken: seed,
+	}
+
+	fmt.Println("OTP Type (HOTP or TOTP): ")
+	entry_type, _ := reader.ReadString('\n')
+	entry_type = strings.Replace(entry_type, "\n", "", -1)
+
+	if strings.Compare("HOTP", strings.ToUpper(entry_type)) == 0 {
+		fmt.Println("Starting Counter (default: 1): ")
+		counter, _ := reader.ReadString('\n')
+		counter = strings.Replace(counter, "\n", "", -1)
+		counter_i, _ := strconv.Atoi(counter)
+		new_entry.Type = pb.OTPEntry_HOTP
+		new_entry.Counter = uint64(counter_i)
+	} else {
+		new_entry.Type = pb.OTPEntry_TOTP
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	_, err := client.AddEntry(ctx, &new_entry)
+	if err != nil {
+		log.Fatalf("%v.AddEntry(_) = _, %v", client, err)
+	}
+
 }
 
 func main() {
@@ -156,11 +167,13 @@ func main() {
 			printOTP(client)
 		}
 
+		if strings.Compare("2", input) == 0 {
+			addEntry(client)
+		}
+
 		if strings.Compare("3", input) == 0 {
 			fmt.Println("Goodbye")
 			os.Exit(0)
 		}
 	}
-
-	//printEntries(client, &pb.UUID{Uuid: ""})
 }

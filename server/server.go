@@ -7,7 +7,7 @@ import (
 	"log"
 	"net"
 
-	pb "github.com/Maddosaurus/gotp/gotp"
+	pb "github.com/Maddosaurus/gotp/proto/gotp"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )

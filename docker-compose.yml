@@ -7,6 +7,8 @@ services:
       context: .
       dockerfile: server/Dockerfile
     image: gotp-server
+    environment:
+      GOTP_GRPC_ENDPOINT: ":50051"
     ports:
       - "50051:50051"
 
@@ -15,5 +17,8 @@ services:
         context: .
         dockerfile: rest/Dockerfile
     image: gotp-rest
+    environment:
+      GOTP_GRPC_ENDPOINT: "server:50051"
+      GOTP_REST_ENDPOINT: ":8081"
     ports:
       - "8081:8081"

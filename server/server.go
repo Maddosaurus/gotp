@@ -2,18 +2,13 @@ package main
 
 import (
 	"context"
-	"flag"
-	"fmt"
 	"log"
 	"net"
 
+	cm "github.com/Maddosaurus/gotp/lib"
 	pb "github.com/Maddosaurus/gotp/proto/gotp"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/timestamppb"
-)
-
-var (
-	port = flag.Int("port", 50051, "Listen port of the server")
 )
 
 type gOTPServer struct {
@@ -90,15 +85,15 @@ func newServer() *gOTPServer {
 }
 
 func main() {
-	flag.Parse()
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
+	grpc_endpoint := cm.Getenv("GOTP_GRPC_ENDPOINT", ":50051")
+	lis, err := net.Listen("tcp", grpc_endpoint)
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
 
 	grpcServer := grpc.NewServer()
 	pb.RegisterGOTPServer(grpcServer, newServer())
-	log.Printf("Server listening at: %v", lis.Addr())
+	log.Printf("gRPC server listening at: %v", lis.Addr())
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
 	}

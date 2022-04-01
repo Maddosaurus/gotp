@@ -1,0 +1,208 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "gotp/gotp.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "gOTP"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/gotp/entries": {
+      "post": {
+        "operationId": "gOTP_AddEntry",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/gotpOTPEntry"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gotpOTPEntry"
+            }
+          }
+        ],
+        "tags": [
+          "gOTP"
+        ]
+      }
+    },
+    "/v1/gotp/entries/{uuid}": {
+      "get": {
+        "operationId": "gOTP_ListEntries",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/gotpOTPEntry"
+                },
+                "error": {
+                  "$ref": "#/definitions/rpcStatus"
+                }
+              },
+              "title": "Stream result of gotpOTPEntry"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "gOTP"
+        ]
+      },
+      "post": {
+        "operationId": "gOTP_UpdateEntry",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/gotpOTPEntry"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/OTPEntryOTPType"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "secretToken": {
+                  "type": "string"
+                },
+                "counter": {
+                  "type": "string",
+                  "format": "uint64"
+                },
+                "updateTime": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "gOTP"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "OTPEntryOTPType": {
+      "type": "string",
+      "enum": [
+        "TOTP",
+        "HOTP"
+      ],
+      "default": "TOTP"
+    },
+    "gotpOTPEntry": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/OTPEntryOTPType"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "secretToken": {
+          "type": "string"
+        },
+        "counter": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "updateTime": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}

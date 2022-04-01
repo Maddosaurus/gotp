@@ -1,15 +1,32 @@
 syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
+import weak "google/api/annotations.proto";
 
 option go_package = "github.com/Maddosaurus/gotp/gotp";
 
 package gotp;
 
 service gOTP {
-    rpc ListEntries(UUID) returns (stream OTPEntry);
-    rpc AddEntry(OTPEntry) returns (OTPEntry);
-    rpc UpdateEntry(OTPEntry) returns (OTPEntry);
+    rpc ListEntries(UUID) returns (stream OTPEntry) {
+        option (google.api.http) = {
+            get:"/v1/gotp/entries/{uuid}"
+        };
+    }
+
+    rpc AddEntry(OTPEntry) returns (OTPEntry) {
+        option (google.api.http) = {
+            post:"/v1/gotp/entries"
+            body: "*"
+        };
+    }
+
+    rpc UpdateEntry(OTPEntry) returns (OTPEntry) {
+        option (google.api.http) = {
+            post:"/v1/gotp/entries/{uuid}"
+            body: "*"
+        };
+    }
 }
 
 message UUID {

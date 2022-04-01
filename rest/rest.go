@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"log"
 	"net/http"
 
 	"github.com/golang/glog"
@@ -16,7 +17,7 @@ import (
 var (
 	// command-line options:
 	// gRPC server endpoint
-	grpcServerEndpoint = flag.String("grpc-server-endpoint", "localhost:50051", "gRPC server endpoint")
+	grpcServerEndpoint = flag.String("grpc-server-endpoint", "server:50051", "gRPC server endpoint")
 )
 
 func run() error {
@@ -40,6 +41,8 @@ func run() error {
 func main() {
 	flag.Parse()
 	defer glog.Flush()
+
+	log.Printf("Server listening at port 8081")
 
 	if err := run(); err != nil {
 		glog.Fatal(err)

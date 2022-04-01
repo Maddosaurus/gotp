@@ -141,7 +141,46 @@ func addEntry(client pb.GOTPClient) {
 	if err != nil {
 		log.Fatalf("%v.AddEntry(_) = _, %v", client, err)
 	}
+}
 
+func deleteEntry(client pb.GOTPClient) {
+	var entries []pb.OTPEntry
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	stream, err := client.ListEntries(ctx, &pb.UUID{Uuid: ""})
+	if err != nil {
+		log.Fatalf("%v.ListEntries(_) = _, %v", client, err)
+	}
+	i := 0
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Println("Select OTP Entry:")
+	for {
+		entry, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatalf("%v.ListEntries(_) = _, %v", client, err)
+		}
+		entries = append(entries, *entry)
+		fmt.Printf("%v - %v\n", i, entry.Name)
+		i++
+	}
+	fmt.Printf("%v - Return to Main Menu\n--->", i)
+	for {
+		input, _ := reader.ReadString('\n')
+		// convert CRLF to LF
+		input = strings.Replace(input, "\n", "", -1)
+
+		if strings.Compare(strconv.Itoa(i), input) == 0 {
+			break
+		}
+
+		ini, _ := strconv.Atoi(input)
+		candidate := entries[ini]
+		client.DeleteEntry(ctx, &candidate)
+		break
+	}
 }
 
 func main() {
@@ -158,7 +197,7 @@ func main() {
 	log.Printf("%v", getAllEntries(client))
 
 	for {
-		fmt.Print("1 - Get OTP\n2 - Add Entry\n3 - Quit\n---> ")
+		fmt.Print("1 - Get OTP\n2 - Add Entry\n3 - Delete Entry\n4 - Quit\n---> ")
 		input, _ := reader.ReadString('\n')
 		// convert CRLF to LF
 		input = strings.Replace(input, "\n", "", -1)
@@ -172,6 +211,10 @@ func main() {
 		}
 
 		if strings.Compare("3", input) == 0 {
+			deleteEntry(client)
+		}
+
+		if strings.Compare("4", input) == 0 {
 			fmt.Println("Goodbye")
 			os.Exit(0)
 		}

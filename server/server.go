@@ -44,6 +44,20 @@ func (s *gOTPServer) UpdateEntry(ctx context.Context, candidate *pb.OTPEntry) (*
 	return candidate, nil
 }
 
+func (s *gOTPServer) DeleteEntry(ctx context.Context, candidate *pb.OTPEntry) (*pb.OTPEntry, error) {
+	for i, entry := range s.savedEntries {
+		if entry.Uuid == candidate.Uuid {
+			if i+1 < len(s.savedEntries) {
+				s.savedEntries = append(s.savedEntries[:i], s.savedEntries[i+1])
+			} else {
+				s.savedEntries = append(s.savedEntries[:i])
+			}
+
+		}
+	}
+	return candidate, nil
+}
+
 func (s *gOTPServer) loadFeatures() {
 	s.savedEntries = []*pb.OTPEntry{
 		{

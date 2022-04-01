@@ -27,6 +27,12 @@ service gOTP {
             body: "*"
         };
     }
+
+    rpc DeleteEntry(OTPEntry) returns (OTPEntry) {
+        option (google.api.http) = {
+            delete:"/v1/gotp/entries/{uuid}"
+        };
+    }
 }
 
 message UUID {

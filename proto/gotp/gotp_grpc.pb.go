@@ -25,6 +25,7 @@ type GOTPClient interface {
 	ListEntries(ctx context.Context, in *UUID, opts ...grpc.CallOption) (GOTP_ListEntriesClient, error)
 	AddEntry(ctx context.Context, in *OTPEntry, opts ...grpc.CallOption) (*OTPEntry, error)
 	UpdateEntry(ctx context.Context, in *OTPEntry, opts ...grpc.CallOption) (*OTPEntry, error)
+	DeleteEntry(ctx context.Context, in *OTPEntry, opts ...grpc.CallOption) (*OTPEntry, error)
 }
 
 type gOTPClient struct {
@@ -85,6 +86,15 @@ func (c *gOTPClient) UpdateEntry(ctx context.Context, in *OTPEntry, opts ...grpc
 	return out, nil
 }
 
+func (c *gOTPClient) DeleteEntry(ctx context.Context, in *OTPEntry, opts ...grpc.CallOption) (*OTPEntry, error) {
+	out := new(OTPEntry)
+	err := c.cc.Invoke(ctx, "/gotp.gOTP/DeleteEntry", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GOTPServer is the server API for GOTP service.
 // All implementations must embed UnimplementedGOTPServer
 // for forward compatibility
@@ -92,6 +102,7 @@ type GOTPServer interface {
 	ListEntries(*UUID, GOTP_ListEntriesServer) error
 	AddEntry(context.Context, *OTPEntry) (*OTPEntry, error)
 	UpdateEntry(context.Context, *OTPEntry) (*OTPEntry, error)
+	DeleteEntry(context.Context, *OTPEntry) (*OTPEntry, error)
 	mustEmbedUnimplementedGOTPServer()
 }
 
@@ -107,6 +118,9 @@ func (UnimplementedGOTPServer) AddEntry(context.Context, *OTPEntry) (*OTPEntry, 
 }
 func (UnimplementedGOTPServer) UpdateEntry(context.Context, *OTPEntry) (*OTPEntry, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateEntry not implemented")
+}
+func (UnimplementedGOTPServer) DeleteEntry(context.Context, *OTPEntry) (*OTPEntry, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteEntry not implemented")
 }
 func (UnimplementedGOTPServer) mustEmbedUnimplementedGOTPServer() {}
 
@@ -178,6 +192,24 @@ func _GOTP_UpdateEntry_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GOTP_DeleteEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OTPEntry)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GOTPServer).DeleteEntry(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gotp.gOTP/DeleteEntry",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GOTPServer).DeleteEntry(ctx, req.(*OTPEntry))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GOTP_ServiceDesc is the grpc.ServiceDesc for GOTP service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -192,6 +224,10 @@ var GOTP_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateEntry",
 			Handler:    _GOTP_UpdateEntry_Handler,
+		},
+		{
+			MethodName: "DeleteEntry",
+			Handler:    _GOTP_DeleteEntry_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

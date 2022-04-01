@@ -86,6 +86,71 @@
           "gOTP"
         ]
       },
+      "delete": {
+        "operationId": "gOTP_DeleteEntry",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/gotpOTPEntry"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "TOTP",
+              "HOTP"
+            ],
+            "default": "TOTP"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "secretToken",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "counter",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "updateTime",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "date-time"
+          }
+        ],
+        "tags": [
+          "gOTP"
+        ]
+      },
       "post": {
         "operationId": "gOTP_UpdateEntry",
         "responses": {

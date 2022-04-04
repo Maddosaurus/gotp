@@ -8,7 +8,12 @@ services:
       dockerfile: server/Dockerfile
     image: gotp-server
     environment:
-      GOTP_GRPC_ENDPOINT: ":50051"
+      - GOTP_GRPC_ENDPOINT=:50051
+      - GOTP_DB_SERVER=db
+      - GOTP_DB_PORT=5432
+      - GOTP_DB_NAME=gotp
+      - GOTP_DB_USER=postgres
+      - GOTP_DB_PASS=passpass
     ports:
       - "50051:50051"
 
@@ -22,3 +27,15 @@ services:
       GOTP_REST_ENDPOINT: ":8081"
     ports:
       - "8081:8081"
+
+  db:
+    image: postgres:14
+    environment:
+      # FIXME: Currently, the user isn't customizable!
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=passpass
+    ports:
+      - "5432:5432"
+    volumes:
+      - "./db/init.sql:/docker-entrypoint-initdb.d/init.sql"
+      # - "./db/storage:/var/lib/postgresql/data"

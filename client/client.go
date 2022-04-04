@@ -13,6 +13,7 @@ import (
 	"time"
 
 	pb "github.com/Maddosaurus/gotp/proto/gotp"
+	"github.com/gofrs/uuid"
 	otp "github.com/xlzd/gotp"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -106,6 +107,11 @@ func printOTP(client pb.GOTPClient) {
 }
 
 func addEntry(client pb.GOTPClient) {
+	uid, err := uuid.NewV4()
+	if err != nil {
+		log.Println("Error while creating entry UUID!")
+		return
+	}
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Println("Entry Name:")
 	entry_name, _ := reader.ReadString('\n')
@@ -116,6 +122,7 @@ func addEntry(client pb.GOTPClient) {
 	seed = strings.Replace(seed, "\n", "", -1)
 
 	new_entry := pb.OTPEntry{
+		Uuid:        uid.String(),
 		Name:        entry_name,
 		SecretToken: seed,
 	}
@@ -137,7 +144,7 @@ func addEntry(client pb.GOTPClient) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	_, err := client.AddEntry(ctx, &new_entry)
+	_, err = client.AddEntry(ctx, &new_entry)
 	if err != nil {
 		log.Fatalf("%v.AddEntry(_) = _, %v", client, err)
 	}

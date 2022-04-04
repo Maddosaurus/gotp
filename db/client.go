@@ -80,11 +80,34 @@ func (p *PgSQL) AddEntry(entry *pb.OTPEntry) error {
 }
 
 func (p *PgSQL) UpdateEntry(entry *pb.OTPEntry) error {
-	return errors.New("Function not implemented!")
+	result, err := p.db.Exec("UPDATE gotp SET (otptype, name, secret_token, counter, update_time) = ($2, $3, $4, $5, $6) WHERE uuid = $1",
+		entry.Uuid, entry.Type, entry.Name, entry.SecretToken, entry.Counter, entry.UpdateTime.AsTime())
+	if err != nil {
+		log.Printf("Could not update row: %v", err)
+		return err
+	}
+	rows, err := result.RowsAffected()
+	if err != nil {
+		log.Printf("Cout not get affected rows: %v", err)
+		return err
+	}
+	log.Printf("%v rows affected", rows)
+	return nil
 }
 
 func (p *PgSQL) DeleteEntry(entry *pb.OTPEntry) error {
-	return errors.New("Function not implemented!")
+	result, err := p.db.Exec("DELETE FROM gotp WHERE uuid = $1", entry.Uuid)
+	if err != nil {
+		log.Printf("Could not delete row: %v", err)
+		return err
+	}
+	rows, err := result.RowsAffected()
+	if err != nil {
+		log.Printf("Cout not get affected rows: %v", err)
+		return err
+	}
+	log.Printf("%v rows affected", rows)
+	return nil
 }
 
 func (p *PgSQL) GetAllEntries() ([]*pb.OTPEntry, error) {

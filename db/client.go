@@ -2,9 +2,11 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"time"
 
+	cm "github.com/Maddosaurus/gotp/lib"
 	pb "github.com/Maddosaurus/gotp/proto/gotp"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -14,7 +16,20 @@ type PgSQL struct {
 }
 
 func (p *PgSQL) InitDB() (*PgSQL, error) {
-	db, err := sql.Open("pgx", "postgresql://postgres:passpass@localhost:5432/gotp")
+	server := cm.Getenv("GOTP_DB_SERVER", "localhost")
+	port := cm.Getenv("GOTP_DB_PORT", "5432")
+	db_name := cm.Getenv("GOTP_DB_NAME", "gotp")
+	db_user := cm.Getenv("GOTP_DB_USER", "postgres")
+	db_pass := cm.Getenv("GOTP_DB_PASS", "passpass")
+
+	connection_string := fmt.Sprintf(
+		"postgresql://%s:%s@%s:%s/%s",
+		db_user, db_pass, server, port, db_name,
+	)
+
+	log.Printf("Connecting to db: postgresql://%s:[REDACTED]@%s:%s/%s", db_user, server, port, db_name)
+
+	db, err := sql.Open("pgx", connection_string)
 	if err != nil {
 		log.Printf("Could not connect to database: %v", err)
 		return nil, err

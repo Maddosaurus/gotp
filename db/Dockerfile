@@ -1,4 +1,5 @@
+# This Dockerfile is optional, you don't need this if you use the included docker-compose.yml
 FROM postgres:14
-ENV POSTGRES_PASSWORD postgres
-ENV POSTGRES_DB testdb
+ENV POSTGRES_PASSWORD passpass
+ENV POSTGRES_DB gotp
 COPY init.sql /docker-entrypoint-initdb.d/

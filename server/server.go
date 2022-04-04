@@ -80,7 +80,6 @@ func (s *gOTPServer) loadFeatures() {
 		},
 	}
 
-	// FIXME: REMOVE ALL OF THIS!
 	e := s.savedEntries[2]
 	log.Printf("Calling for entry: %v", e)
 	err := s.db.AddEntry(e)

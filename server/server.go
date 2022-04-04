@@ -8,7 +8,7 @@ import (
 	pgsql "github.com/Maddosaurus/gotp/db"
 	cm "github.com/Maddosaurus/gotp/lib"
 	pb "github.com/Maddosaurus/gotp/proto/gotp"
-	_ "github.com/jackc/pgx/v4/stdlib"
+	"github.com/gofrs/uuid"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -20,7 +20,11 @@ type gOTPServer struct {
 }
 
 func (s *gOTPServer) ListEntries(uuid *pb.UUID, stream pb.GOTP_ListEntriesServer) error {
-	for _, entry := range s.savedEntries {
+	entries, err := s.db.GetAllEntries()
+	if err != nil {
+		return err
+	}
+	for _, entry := range entries {
 		if err := stream.Send(entry); err != nil {
 			return err
 		}
@@ -57,6 +61,7 @@ func (s *gOTPServer) DeleteEntry(ctx context.Context, candidate *pb.OTPEntry) (*
 }
 
 func (s *gOTPServer) loadFeatures() {
+	uid, _ := uuid.NewV4()
 	s.savedEntries = []*pb.OTPEntry{
 		{
 			Type:        pb.OTPEntry_TOTP,
@@ -72,7 +77,7 @@ func (s *gOTPServer) loadFeatures() {
 			UpdateTime:  timestamppb.Now(),
 		}, {
 			Type:        pb.OTPEntry_HOTP,
-			Uuid:        "1234567dfcg",
+			Uuid:        uid.String(),
 			Name:        "CustomSite",
 			SecretToken: "4S62BZNFXXSZLCRO",
 			Counter:     1,
@@ -93,9 +98,6 @@ func newServer() *gOTPServer {
 	s := &gOTPServer{}
 	s.db = &pgsql.PgSQL{}
 	s.db.InitDB()
-	s.loadFeatures()
-	uu := "1234"
-	s.db.GetEntry(&uu)
 	return s
 }
 

@@ -2,11 +2,14 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"log"
 	"net"
+	"time"
 
 	cm "github.com/Maddosaurus/gotp/lib"
 	pb "github.com/Maddosaurus/gotp/proto/gotp"
+	_ "github.com/jackc/pgx/v4/stdlib"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -14,6 +17,7 @@ import (
 type gOTPServer struct {
 	pb.UnimplementedGOTPServer
 	savedEntries []*pb.OTPEntry
+	db           *sql.DB
 }
 
 func (s *gOTPServer) ListEntries(uuid *pb.UUID, stream pb.GOTP_ListEntriesServer) error {
@@ -76,12 +80,52 @@ func (s *gOTPServer) loadFeatures() {
 			UpdateTime:  timestamppb.Now(),
 		},
 	}
+
+	// FIXME: REMOVE ALL OF THIS!
+	e := s.savedEntries[2]
+	log.Printf("Serializing entry: %v", e)
+	result, err := s.db.Exec("INSERT INTO gotp (uuid, otptype, name, secret_token, counter, update_time) VALUES ($1, $2, $3, $4, $5, $6)",
+		e.Uuid, e.Type, e.Name, e.SecretToken, e.Counter, e.UpdateTime.AsTime())
+	if err != nil {
+		log.Fatalf("Could not insert row: %v", err)
+	}
+	rows, err := result.RowsAffected()
+	if err != nil {
+		log.Fatalf("Cout not get affected rows: %v", err)
+	}
+	log.Printf("%v rows affected", rows)
+}
+
+func initDBConnection() *sql.DB {
+	db, err := sql.Open("pgx", "postgresql://postgres:passpass@localhost:5432/gotp")
+	if err != nil {
+		log.Fatalf("Could not connect to database: %v", err)
+	}
+	if err := db.Ping(); err != nil {
+		log.Fatalf("Unable to reach database %v", err)
+	}
+	log.Print("Database connection established!")
+	return db
 }
 
 func newServer() *gOTPServer {
 	s := &gOTPServer{}
+	s.db = initDBConnection()
 	s.loadFeatures()
+	s.getDBEntry()
 	return s
+}
+
+func (s *gOTPServer) getDBEntry() pb.OTPEntry {
+	row := s.db.QueryRow("SELECT * FROM gotp LIMIT 1")
+	r := pb.OTPEntry{}
+	t := time.Time{}
+	if err := row.Scan(&r.Uuid, &r.Type, &r.Name, &r.SecretToken, &r.Counter, &t); err != nil {
+		log.Fatalf("Could not scan row: %v", err)
+	}
+	r.UpdateTime = timestamppb.New(t)
+	log.Printf("Deserialized entry: %v", r)
+	return r
 }
 
 func main() {

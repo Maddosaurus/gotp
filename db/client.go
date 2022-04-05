@@ -18,11 +18,11 @@ type PgSQL struct {
 }
 
 func (p *PgSQL) InitDB() (*PgSQL, error) {
-	server := cm.Getenv("GOTP_DB_SERVER", "localhost")
-	port := cm.Getenv("GOTP_DB_PORT", "5432")
-	db_name := cm.Getenv("GOTP_DB_NAME", "gotp")
-	db_user := cm.Getenv("GOTP_DB_USER", "postgres")
-	db_pass := cm.Getenv("GOTP_DB_PASS", "passpass")
+	server := cm.Getenv("PALLAS_DB_SERVER", "localhost")
+	port := cm.Getenv("PALLAS_DB_PORT", "5432")
+	db_name := cm.Getenv("PALLAS_DB_NAME", "gotp")
+	db_user := cm.Getenv("PALLAS_DB_USER", "postgres")
+	db_pass := cm.Getenv("PALLAS_DB_PASS", "passpass")
 	retry_count := 3
 	retry_wait_s := 3 * time.Second
 

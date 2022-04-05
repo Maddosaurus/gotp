@@ -71,7 +71,7 @@ func newServer() *gOTPServer {
 }
 
 func main() {
-	grpc_endpoint := cm.Getenv("GOTP_GRPC_ENDPOINT", ":50051")
+	grpc_endpoint := cm.Getenv("PALLAS_GRPC_SERVE_ENDPOINT", ":50051")
 	lis, err := net.Listen("tcp", grpc_endpoint)
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)

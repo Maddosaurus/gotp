@@ -1,41 +1,50 @@
 version: '3.8'
 
-
 services:
   server:
     build:
       context: .
       dockerfile: server/Dockerfile
-    image: gotp-server
+    image: pallas-server
     environment:
-      - GOTP_GRPC_ENDPOINT=:50051
-      - GOTP_DB_SERVER=db
-      - GOTP_DB_PORT=5432
-      - GOTP_DB_NAME=gotp
-      - GOTP_DB_USER=postgres
-      - GOTP_DB_PASS=passpass
+      - PALLAS_GRPC_SERVE_ENDPOINT=:${PALLAS_GRPC_PORT}
+      - PALLAS_DB_SERVER=db
+      - PALLAS_DB_PORT=5432
+      - PALLAS_DB_NAME=gotp
+      - PALLAS_DB_USER=${PALLAS_DB_USERNAME}
+      - PALLAS_DB_PASS=${PALLAS_DB_PASSWORD}
     ports:
-      - "50051:50051"
+      - "50051:${PALLAS_GRPC_PORT}"
+    depends_on:
+      db:
+        condition: service_healthy
 
   rest-api:
     build:
         context: .
         dockerfile: rest/Dockerfile
-    image: gotp-rest
+    image: pallas-rest
     environment:
-      GOTP_GRPC_ENDPOINT: "server:50051"
-      GOTP_REST_ENDPOINT: ":8081"
+      - PALLAS_REST_SERVE_ENDPOINT=:${PALLAS_REST_PORT}
+      - PALLAS_GRPC_ENDPOINT=server:${PALLAS_GRPC_PORT}
     ports:
-      - "8081:8081"
+      - "8081:${PALLAS_REST_PORT}"
+    depends_on:
+      - server
 
   db:
     image: postgres:14
     environment:
       # FIXME: Currently, the user isn't customizable!
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=passpass
+      - POSTGRES_USER=${PALLAS_DB_USERNAME}
+      - POSTGRES_PASSWORD=${PALLAS_DB_PASSWORD}
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PALLAS_DB_USERNAME}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     volumes:
       - "./db/init.sql:/docker-entrypoint-initdb.d/init.sql"
       # - "./db/storage:/var/lib/postgresql/data"

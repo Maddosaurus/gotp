@@ -16,8 +16,8 @@ import (
 )
 
 func run() error {
-	gotp_endpoint := cm.Getenv("GOTP_GRPC_ENDPOINT", "server:50051")
-	serv_endpoint := cm.Getenv("GOTP_REST_ENDPOINT", ":8081")
+	gotp_endpoint := cm.Getenv("PALLAS_GRPC_ENDPOINT", "server:50051")
+	serv_endpoint := cm.Getenv("PALLAS_REST_SERVE_ENDPOINT", ":8081")
 
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)

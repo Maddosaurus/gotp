@@ -2,11 +2,11 @@
 // source: pallas/pallas.proto
 
 /*
-Package gotp is a reverse proxy.
+Package pallas is a reverse proxy.
 
 It translates gRPC into RESTful JSON APIs.
 */
-package gotp
+package pallas
 
 import (
 	"context"
@@ -31,7 +31,7 @@ var _ = runtime.String
 var _ = utilities.NewDoubleArray
 var _ = metadata.Join
 
-func request_GOTP_ListEntries_0(ctx context.Context, marshaler runtime.Marshaler, client GOTPClient, req *http.Request, pathParams map[string]string) (GOTP_ListEntriesClient, runtime.ServerMetadata, error) {
+func request_Otp_ListEntries_0(ctx context.Context, marshaler runtime.Marshaler, client OtpClient, req *http.Request, pathParams map[string]string) (Otp_ListEntriesClient, runtime.ServerMetadata, error) {
 	var protoReq UUID
 	var metadata runtime.ServerMetadata
 
@@ -65,7 +65,7 @@ func request_GOTP_ListEntries_0(ctx context.Context, marshaler runtime.Marshaler
 
 }
 
-func request_GOTP_AddEntry_0(ctx context.Context, marshaler runtime.Marshaler, client GOTPClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_Otp_AddEntry_0(ctx context.Context, marshaler runtime.Marshaler, client OtpClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq OTPEntry
 	var metadata runtime.ServerMetadata
 
@@ -82,7 +82,7 @@ func request_GOTP_AddEntry_0(ctx context.Context, marshaler runtime.Marshaler, c
 
 }
 
-func local_request_GOTP_AddEntry_0(ctx context.Context, marshaler runtime.Marshaler, server GOTPServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_Otp_AddEntry_0(ctx context.Context, marshaler runtime.Marshaler, server OtpServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq OTPEntry
 	var metadata runtime.ServerMetadata
 
@@ -99,7 +99,7 @@ func local_request_GOTP_AddEntry_0(ctx context.Context, marshaler runtime.Marsha
 
 }
 
-func request_GOTP_UpdateEntry_0(ctx context.Context, marshaler runtime.Marshaler, client GOTPClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_Otp_UpdateEntry_0(ctx context.Context, marshaler runtime.Marshaler, client OtpClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq OTPEntry
 	var metadata runtime.ServerMetadata
 
@@ -133,7 +133,7 @@ func request_GOTP_UpdateEntry_0(ctx context.Context, marshaler runtime.Marshaler
 
 }
 
-func local_request_GOTP_UpdateEntry_0(ctx context.Context, marshaler runtime.Marshaler, server GOTPServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_Otp_UpdateEntry_0(ctx context.Context, marshaler runtime.Marshaler, server OtpServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq OTPEntry
 	var metadata runtime.ServerMetadata
 
@@ -168,10 +168,10 @@ func local_request_GOTP_UpdateEntry_0(ctx context.Context, marshaler runtime.Mar
 }
 
 var (
-	filter_GOTP_DeleteEntry_0 = &utilities.DoubleArray{Encoding: map[string]int{"uuid": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
+	filter_Otp_DeleteEntry_0 = &utilities.DoubleArray{Encoding: map[string]int{"uuid": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
 )
 
-func request_GOTP_DeleteEntry_0(ctx context.Context, marshaler runtime.Marshaler, client GOTPClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_Otp_DeleteEntry_0(ctx context.Context, marshaler runtime.Marshaler, client OtpClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq OTPEntry
 	var metadata runtime.ServerMetadata
 
@@ -195,7 +195,7 @@ func request_GOTP_DeleteEntry_0(ctx context.Context, marshaler runtime.Marshaler
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_GOTP_DeleteEntry_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Otp_DeleteEntry_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -204,7 +204,7 @@ func request_GOTP_DeleteEntry_0(ctx context.Context, marshaler runtime.Marshaler
 
 }
 
-func local_request_GOTP_DeleteEntry_0(ctx context.Context, marshaler runtime.Marshaler, server GOTPServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_Otp_DeleteEntry_0(ctx context.Context, marshaler runtime.Marshaler, server OtpServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq OTPEntry
 	var metadata runtime.ServerMetadata
 
@@ -228,7 +228,7 @@ func local_request_GOTP_DeleteEntry_0(ctx context.Context, marshaler runtime.Mar
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_GOTP_DeleteEntry_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Otp_DeleteEntry_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -237,32 +237,32 @@ func local_request_GOTP_DeleteEntry_0(ctx context.Context, marshaler runtime.Mar
 
 }
 
-// RegisterGOTPHandlerServer registers the http handlers for service GOTP to "mux".
-// UnaryRPC     :call GOTPServer directly.
+// RegisterOtpHandlerServer registers the http handlers for service Otp to "mux".
+// UnaryRPC     :call OtpServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
-// Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterGOTPHandlerFromEndpoint instead.
-func RegisterGOTPHandlerServer(ctx context.Context, mux *runtime.ServeMux, server GOTPServer) error {
+// Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterOtpHandlerFromEndpoint instead.
+func RegisterOtpHandlerServer(ctx context.Context, mux *runtime.ServeMux, server OtpServer) error {
 
-	mux.Handle("GET", pattern_GOTP_ListEntries_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_Otp_ListEntries_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		err := status.Error(codes.Unimplemented, "streaming calls are not yet supported in the in-process transport")
 		_, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 		return
 	})
 
-	mux.Handle("POST", pattern_GOTP_AddEntry_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_Otp_AddEntry_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/gotp.GOTP/AddEntry", runtime.WithHTTPPathPattern("/v1/gotp/entries"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pallas.Otp/AddEntry", runtime.WithHTTPPathPattern("/v1/otp/entries"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_GOTP_AddEntry_0(ctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Otp_AddEntry_0(ctx, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
@@ -270,23 +270,23 @@ func RegisterGOTPHandlerServer(ctx context.Context, mux *runtime.ServeMux, serve
 			return
 		}
 
-		forward_GOTP_AddEntry_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Otp_AddEntry_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("POST", pattern_GOTP_UpdateEntry_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_Otp_UpdateEntry_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/gotp.GOTP/UpdateEntry", runtime.WithHTTPPathPattern("/v1/gotp/entries/{uuid}"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pallas.Otp/UpdateEntry", runtime.WithHTTPPathPattern("/v1/otp/entries/{uuid}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_GOTP_UpdateEntry_0(ctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Otp_UpdateEntry_0(ctx, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
@@ -294,23 +294,23 @@ func RegisterGOTPHandlerServer(ctx context.Context, mux *runtime.ServeMux, serve
 			return
 		}
 
-		forward_GOTP_UpdateEntry_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Otp_UpdateEntry_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("DELETE", pattern_GOTP_DeleteEntry_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("DELETE", pattern_Otp_DeleteEntry_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/gotp.GOTP/DeleteEntry", runtime.WithHTTPPathPattern("/v1/gotp/entries/{uuid}"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pallas.Otp/DeleteEntry", runtime.WithHTTPPathPattern("/v1/otp/entries/{uuid}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_GOTP_DeleteEntry_0(ctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Otp_DeleteEntry_0(ctx, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
@@ -318,16 +318,16 @@ func RegisterGOTPHandlerServer(ctx context.Context, mux *runtime.ServeMux, serve
 			return
 		}
 
-		forward_GOTP_DeleteEntry_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Otp_DeleteEntry_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
 	return nil
 }
 
-// RegisterGOTPHandlerFromEndpoint is same as RegisterGOTPHandler but
+// RegisterOtpHandlerFromEndpoint is same as RegisterOtpHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func RegisterGOTPHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
+func RegisterOtpHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
 	conn, err := grpc.Dial(endpoint, opts...)
 	if err != nil {
 		return err
@@ -347,103 +347,103 @@ func RegisterGOTPHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux,
 		}()
 	}()
 
-	return RegisterGOTPHandler(ctx, mux, conn)
+	return RegisterOtpHandler(ctx, mux, conn)
 }
 
-// RegisterGOTPHandler registers the http handlers for service GOTP to "mux".
+// RegisterOtpHandler registers the http handlers for service Otp to "mux".
 // The handlers forward requests to the grpc endpoint over "conn".
-func RegisterGOTPHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
-	return RegisterGOTPHandlerClient(ctx, mux, NewGOTPClient(conn))
+func RegisterOtpHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
+	return RegisterOtpHandlerClient(ctx, mux, NewOtpClient(conn))
 }
 
-// RegisterGOTPHandlerClient registers the http handlers for service GOTP
-// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "GOTPClient".
-// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "GOTPClient"
+// RegisterOtpHandlerClient registers the http handlers for service Otp
+// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "OtpClient".
+// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "OtpClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
-// "GOTPClient" to call the correct interceptors.
-func RegisterGOTPHandlerClient(ctx context.Context, mux *runtime.ServeMux, client GOTPClient) error {
+// "OtpClient" to call the correct interceptors.
+func RegisterOtpHandlerClient(ctx context.Context, mux *runtime.ServeMux, client OtpClient) error {
 
-	mux.Handle("GET", pattern_GOTP_ListEntries_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_Otp_ListEntries_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/gotp.GOTP/ListEntries", runtime.WithHTTPPathPattern("/v1/gotp/entries/{uuid}"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/pallas.Otp/ListEntries", runtime.WithHTTPPathPattern("/v1/otp/entries/{uuid}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_GOTP_ListEntries_0(ctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Otp_ListEntries_0(ctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_GOTP_ListEntries_0(ctx, mux, outboundMarshaler, w, req, func() (proto.Message, error) { return resp.Recv() }, mux.GetForwardResponseOptions()...)
+		forward_Otp_ListEntries_0(ctx, mux, outboundMarshaler, w, req, func() (proto.Message, error) { return resp.Recv() }, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("POST", pattern_GOTP_AddEntry_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_Otp_AddEntry_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/gotp.GOTP/AddEntry", runtime.WithHTTPPathPattern("/v1/gotp/entries"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/pallas.Otp/AddEntry", runtime.WithHTTPPathPattern("/v1/otp/entries"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_GOTP_AddEntry_0(ctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Otp_AddEntry_0(ctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_GOTP_AddEntry_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Otp_AddEntry_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("POST", pattern_GOTP_UpdateEntry_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_Otp_UpdateEntry_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/gotp.GOTP/UpdateEntry", runtime.WithHTTPPathPattern("/v1/gotp/entries/{uuid}"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/pallas.Otp/UpdateEntry", runtime.WithHTTPPathPattern("/v1/otp/entries/{uuid}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_GOTP_UpdateEntry_0(ctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Otp_UpdateEntry_0(ctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_GOTP_UpdateEntry_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Otp_UpdateEntry_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("DELETE", pattern_GOTP_DeleteEntry_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("DELETE", pattern_Otp_DeleteEntry_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/gotp.GOTP/DeleteEntry", runtime.WithHTTPPathPattern("/v1/gotp/entries/{uuid}"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/pallas.Otp/DeleteEntry", runtime.WithHTTPPathPattern("/v1/otp/entries/{uuid}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_GOTP_DeleteEntry_0(ctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Otp_DeleteEntry_0(ctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_GOTP_DeleteEntry_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Otp_DeleteEntry_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -451,21 +451,21 @@ func RegisterGOTPHandlerClient(ctx context.Context, mux *runtime.ServeMux, clien
 }
 
 var (
-	pattern_GOTP_ListEntries_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "gotp", "entries", "uuid"}, ""))
+	pattern_Otp_ListEntries_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "otp", "entries", "uuid"}, ""))
 
-	pattern_GOTP_AddEntry_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "gotp", "entries"}, ""))
+	pattern_Otp_AddEntry_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "otp", "entries"}, ""))
 
-	pattern_GOTP_UpdateEntry_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "gotp", "entries", "uuid"}, ""))
+	pattern_Otp_UpdateEntry_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "otp", "entries", "uuid"}, ""))
 
-	pattern_GOTP_DeleteEntry_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "gotp", "entries", "uuid"}, ""))
+	pattern_Otp_DeleteEntry_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "otp", "entries", "uuid"}, ""))
 )
 
 var (
-	forward_GOTP_ListEntries_0 = runtime.ForwardResponseStream
+	forward_Otp_ListEntries_0 = runtime.ForwardResponseStream
 
-	forward_GOTP_AddEntry_0 = runtime.ForwardResponseMessage
+	forward_Otp_AddEntry_0 = runtime.ForwardResponseMessage
 
-	forward_GOTP_UpdateEntry_0 = runtime.ForwardResponseMessage
+	forward_Otp_UpdateEntry_0 = runtime.ForwardResponseMessage
 
-	forward_GOTP_DeleteEntry_0 = runtime.ForwardResponseMessage
+	forward_Otp_DeleteEntry_0 = runtime.ForwardResponseMessage
 )

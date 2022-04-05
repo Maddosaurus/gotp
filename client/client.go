@@ -25,7 +25,7 @@ var (
 )
 
 // TODO: Refactor?
-func getAllEntries(client pb.GOTPClient) []*pb.OTPEntry {
+func getAllEntries(client pb.OtpClient) []*pb.OTPEntry {
 	var entries []*pb.OTPEntry
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -47,7 +47,7 @@ func getAllEntries(client pb.GOTPClient) []*pb.OTPEntry {
 }
 
 // TODO: Refactor into lib, for common client and server (verification)
-func printEntry(client pb.GOTPClient, entry *pb.OTPEntry) {
+func printEntry(client pb.OtpClient, entry *pb.OTPEntry) {
 	log.Printf("Entry: %v // Updated at: %v", entry.Name, entry.UpdateTime.AsTime())
 	defer func() {
 		if r := recover(); r != nil {
@@ -73,7 +73,7 @@ func printEntry(client pb.GOTPClient, entry *pb.OTPEntry) {
 	}
 }
 
-func printOTP(client pb.GOTPClient) {
+func printOTP(client pb.OtpClient) {
 	var entries []*pb.OTPEntry
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -112,7 +112,7 @@ func printOTP(client pb.GOTPClient) {
 	}
 }
 
-func addEntry(client pb.GOTPClient) {
+func addEntry(client pb.OtpClient) {
 	uid, err := uuid.NewV4()
 	if err != nil {
 		log.Println("Error while creating entry UUID!")
@@ -158,7 +158,7 @@ func addEntry(client pb.GOTPClient) {
 	}
 }
 
-func deleteEntry(client pb.GOTPClient) {
+func deleteEntry(client pb.OtpClient) {
 	var entries []*pb.OTPEntry
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -207,7 +207,7 @@ func main() {
 		log.Fatalf("fail to dial %v", err)
 	}
 	defer conn.Close()
-	client := pb.NewGOTPClient(conn)
+	client := pb.NewOtpClient(conn)
 
 	log.Printf("%v", getAllEntries(client))
 

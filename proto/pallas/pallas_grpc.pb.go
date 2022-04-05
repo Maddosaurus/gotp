@@ -4,7 +4,7 @@
 // - protoc             v3.19.4
 // source: pallas/pallas.proto
 
-package gotp
+package pallas
 
 import (
 	context "context"
@@ -18,30 +18,30 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// GOTPClient is the client API for GOTP service.
+// OtpClient is the client API for Otp service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type GOTPClient interface {
-	ListEntries(ctx context.Context, in *UUID, opts ...grpc.CallOption) (GOTP_ListEntriesClient, error)
+type OtpClient interface {
+	ListEntries(ctx context.Context, in *UUID, opts ...grpc.CallOption) (Otp_ListEntriesClient, error)
 	AddEntry(ctx context.Context, in *OTPEntry, opts ...grpc.CallOption) (*OTPEntry, error)
 	UpdateEntry(ctx context.Context, in *OTPEntry, opts ...grpc.CallOption) (*OTPEntry, error)
 	DeleteEntry(ctx context.Context, in *OTPEntry, opts ...grpc.CallOption) (*OTPEntry, error)
 }
 
-type gOTPClient struct {
+type otpClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewGOTPClient(cc grpc.ClientConnInterface) GOTPClient {
-	return &gOTPClient{cc}
+func NewOtpClient(cc grpc.ClientConnInterface) OtpClient {
+	return &otpClient{cc}
 }
 
-func (c *gOTPClient) ListEntries(ctx context.Context, in *UUID, opts ...grpc.CallOption) (GOTP_ListEntriesClient, error) {
-	stream, err := c.cc.NewStream(ctx, &GOTP_ServiceDesc.Streams[0], "/gotp.gOTP/ListEntries", opts...)
+func (c *otpClient) ListEntries(ctx context.Context, in *UUID, opts ...grpc.CallOption) (Otp_ListEntriesClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Otp_ServiceDesc.Streams[0], "/pallas.otp/ListEntries", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &gOTPListEntriesClient{stream}
+	x := &otpListEntriesClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -51,16 +51,16 @@ func (c *gOTPClient) ListEntries(ctx context.Context, in *UUID, opts ...grpc.Cal
 	return x, nil
 }
 
-type GOTP_ListEntriesClient interface {
+type Otp_ListEntriesClient interface {
 	Recv() (*OTPEntry, error)
 	grpc.ClientStream
 }
 
-type gOTPListEntriesClient struct {
+type otpListEntriesClient struct {
 	grpc.ClientStream
 }
 
-func (x *gOTPListEntriesClient) Recv() (*OTPEntry, error) {
+func (x *otpListEntriesClient) Recv() (*OTPEntry, error) {
 	m := new(OTPEntry)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -68,172 +68,172 @@ func (x *gOTPListEntriesClient) Recv() (*OTPEntry, error) {
 	return m, nil
 }
 
-func (c *gOTPClient) AddEntry(ctx context.Context, in *OTPEntry, opts ...grpc.CallOption) (*OTPEntry, error) {
+func (c *otpClient) AddEntry(ctx context.Context, in *OTPEntry, opts ...grpc.CallOption) (*OTPEntry, error) {
 	out := new(OTPEntry)
-	err := c.cc.Invoke(ctx, "/gotp.gOTP/AddEntry", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pallas.otp/AddEntry", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *gOTPClient) UpdateEntry(ctx context.Context, in *OTPEntry, opts ...grpc.CallOption) (*OTPEntry, error) {
+func (c *otpClient) UpdateEntry(ctx context.Context, in *OTPEntry, opts ...grpc.CallOption) (*OTPEntry, error) {
 	out := new(OTPEntry)
-	err := c.cc.Invoke(ctx, "/gotp.gOTP/UpdateEntry", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pallas.otp/UpdateEntry", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *gOTPClient) DeleteEntry(ctx context.Context, in *OTPEntry, opts ...grpc.CallOption) (*OTPEntry, error) {
+func (c *otpClient) DeleteEntry(ctx context.Context, in *OTPEntry, opts ...grpc.CallOption) (*OTPEntry, error) {
 	out := new(OTPEntry)
-	err := c.cc.Invoke(ctx, "/gotp.gOTP/DeleteEntry", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pallas.otp/DeleteEntry", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// GOTPServer is the server API for GOTP service.
-// All implementations must embed UnimplementedGOTPServer
+// OtpServer is the server API for Otp service.
+// All implementations must embed UnimplementedOtpServer
 // for forward compatibility
-type GOTPServer interface {
-	ListEntries(*UUID, GOTP_ListEntriesServer) error
+type OtpServer interface {
+	ListEntries(*UUID, Otp_ListEntriesServer) error
 	AddEntry(context.Context, *OTPEntry) (*OTPEntry, error)
 	UpdateEntry(context.Context, *OTPEntry) (*OTPEntry, error)
 	DeleteEntry(context.Context, *OTPEntry) (*OTPEntry, error)
-	mustEmbedUnimplementedGOTPServer()
+	mustEmbedUnimplementedOtpServer()
 }
 
-// UnimplementedGOTPServer must be embedded to have forward compatible implementations.
-type UnimplementedGOTPServer struct {
+// UnimplementedOtpServer must be embedded to have forward compatible implementations.
+type UnimplementedOtpServer struct {
 }
 
-func (UnimplementedGOTPServer) ListEntries(*UUID, GOTP_ListEntriesServer) error {
+func (UnimplementedOtpServer) ListEntries(*UUID, Otp_ListEntriesServer) error {
 	return status.Errorf(codes.Unimplemented, "method ListEntries not implemented")
 }
-func (UnimplementedGOTPServer) AddEntry(context.Context, *OTPEntry) (*OTPEntry, error) {
+func (UnimplementedOtpServer) AddEntry(context.Context, *OTPEntry) (*OTPEntry, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddEntry not implemented")
 }
-func (UnimplementedGOTPServer) UpdateEntry(context.Context, *OTPEntry) (*OTPEntry, error) {
+func (UnimplementedOtpServer) UpdateEntry(context.Context, *OTPEntry) (*OTPEntry, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateEntry not implemented")
 }
-func (UnimplementedGOTPServer) DeleteEntry(context.Context, *OTPEntry) (*OTPEntry, error) {
+func (UnimplementedOtpServer) DeleteEntry(context.Context, *OTPEntry) (*OTPEntry, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteEntry not implemented")
 }
-func (UnimplementedGOTPServer) mustEmbedUnimplementedGOTPServer() {}
+func (UnimplementedOtpServer) mustEmbedUnimplementedOtpServer() {}
 
-// UnsafeGOTPServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to GOTPServer will
+// UnsafeOtpServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to OtpServer will
 // result in compilation errors.
-type UnsafeGOTPServer interface {
-	mustEmbedUnimplementedGOTPServer()
+type UnsafeOtpServer interface {
+	mustEmbedUnimplementedOtpServer()
 }
 
-func RegisterGOTPServer(s grpc.ServiceRegistrar, srv GOTPServer) {
-	s.RegisterService(&GOTP_ServiceDesc, srv)
+func RegisterOtpServer(s grpc.ServiceRegistrar, srv OtpServer) {
+	s.RegisterService(&Otp_ServiceDesc, srv)
 }
 
-func _GOTP_ListEntries_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _Otp_ListEntries_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(UUID)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(GOTPServer).ListEntries(m, &gOTPListEntriesServer{stream})
+	return srv.(OtpServer).ListEntries(m, &otpListEntriesServer{stream})
 }
 
-type GOTP_ListEntriesServer interface {
+type Otp_ListEntriesServer interface {
 	Send(*OTPEntry) error
 	grpc.ServerStream
 }
 
-type gOTPListEntriesServer struct {
+type otpListEntriesServer struct {
 	grpc.ServerStream
 }
 
-func (x *gOTPListEntriesServer) Send(m *OTPEntry) error {
+func (x *otpListEntriesServer) Send(m *OTPEntry) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _GOTP_AddEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Otp_AddEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(OTPEntry)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GOTPServer).AddEntry(ctx, in)
+		return srv.(OtpServer).AddEntry(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gotp.gOTP/AddEntry",
+		FullMethod: "/pallas.otp/AddEntry",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GOTPServer).AddEntry(ctx, req.(*OTPEntry))
+		return srv.(OtpServer).AddEntry(ctx, req.(*OTPEntry))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GOTP_UpdateEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Otp_UpdateEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(OTPEntry)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GOTPServer).UpdateEntry(ctx, in)
+		return srv.(OtpServer).UpdateEntry(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gotp.gOTP/UpdateEntry",
+		FullMethod: "/pallas.otp/UpdateEntry",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GOTPServer).UpdateEntry(ctx, req.(*OTPEntry))
+		return srv.(OtpServer).UpdateEntry(ctx, req.(*OTPEntry))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GOTP_DeleteEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Otp_DeleteEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(OTPEntry)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GOTPServer).DeleteEntry(ctx, in)
+		return srv.(OtpServer).DeleteEntry(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gotp.gOTP/DeleteEntry",
+		FullMethod: "/pallas.otp/DeleteEntry",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GOTPServer).DeleteEntry(ctx, req.(*OTPEntry))
+		return srv.(OtpServer).DeleteEntry(ctx, req.(*OTPEntry))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// GOTP_ServiceDesc is the grpc.ServiceDesc for GOTP service.
+// Otp_ServiceDesc is the grpc.ServiceDesc for Otp service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var GOTP_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "gotp.gOTP",
-	HandlerType: (*GOTPServer)(nil),
+var Otp_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "pallas.otp",
+	HandlerType: (*OtpServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "AddEntry",
-			Handler:    _GOTP_AddEntry_Handler,
+			Handler:    _Otp_AddEntry_Handler,
 		},
 		{
 			MethodName: "UpdateEntry",
-			Handler:    _GOTP_UpdateEntry_Handler,
+			Handler:    _Otp_UpdateEntry_Handler,
 		},
 		{
 			MethodName: "DeleteEntry",
-			Handler:    _GOTP_DeleteEntry_Handler,
+			Handler:    _Otp_DeleteEntry_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "ListEntries",
-			Handler:       _GOTP_ListEntries_Handler,
+			Handler:       _Otp_ListEntries_Handler,
 			ServerStreams: true,
 		},
 	},

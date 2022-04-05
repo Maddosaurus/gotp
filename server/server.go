@@ -14,11 +14,11 @@ import (
 )
 
 type gOTPServer struct {
-	pb.UnimplementedGOTPServer
+	pb.UnimplementedOtpServer
 	db *pgsql.PgSQL
 }
 
-func (s *gOTPServer) ListEntries(uuid *pb.UUID, stream pb.GOTP_ListEntriesServer) error {
+func (s *gOTPServer) ListEntries(uuid *pb.UUID, stream pb.Otp_ListEntriesServer) error {
 	entries, err := s.db.GetAllEntries()
 	if err != nil {
 		return err
@@ -78,7 +78,7 @@ func main() {
 	}
 
 	grpcServer := grpc.NewServer()
-	pb.RegisterGOTPServer(grpcServer, newServer())
+	pb.RegisterOtpServer(grpcServer, newServer())
 	log.Printf("gRPC server listening at: %v", lis.Addr())
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v", err)

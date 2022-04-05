@@ -6,7 +6,7 @@
   },
   "tags": [
     {
-      "name": "gOTP"
+      "name": "otp"
     }
   ],
   "consumes": [
@@ -16,14 +16,14 @@
     "application/json"
   ],
   "paths": {
-    "/v1/gotp/entries": {
+    "/v1/otp/entries": {
       "post": {
-        "operationId": "gOTP_AddEntry",
+        "operationId": "otp_AddEntry",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/gotpOTPEntry"
+              "$ref": "#/definitions/pallasOTPEntry"
             }
           },
           "default": {
@@ -39,18 +39,18 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gotpOTPEntry"
+              "$ref": "#/definitions/pallasOTPEntry"
             }
           }
         ],
         "tags": [
-          "gOTP"
+          "otp"
         ]
       }
     },
-    "/v1/gotp/entries/{uuid}": {
+    "/v1/otp/entries/{uuid}": {
       "get": {
-        "operationId": "gOTP_ListEntries",
+        "operationId": "otp_ListEntries",
         "responses": {
           "200": {
             "description": "A successful response.(streaming responses)",
@@ -58,13 +58,13 @@
               "type": "object",
               "properties": {
                 "result": {
-                  "$ref": "#/definitions/gotpOTPEntry"
+                  "$ref": "#/definitions/pallasOTPEntry"
                 },
                 "error": {
                   "$ref": "#/definitions/rpcStatus"
                 }
               },
-              "title": "Stream result of gotpOTPEntry"
+              "title": "Stream result of pallasOTPEntry"
             }
           },
           "default": {
@@ -84,16 +84,16 @@
           }
         ],
         "tags": [
-          "gOTP"
+          "otp"
         ]
       },
       "delete": {
-        "operationId": "gOTP_DeleteEntry",
+        "operationId": "otp_DeleteEntry",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/gotpOTPEntry"
+              "$ref": "#/definitions/pallasOTPEntry"
             }
           },
           "default": {
@@ -149,16 +149,16 @@
           }
         ],
         "tags": [
-          "gOTP"
+          "otp"
         ]
       },
       "post": {
-        "operationId": "gOTP_UpdateEntry",
+        "operationId": "otp_UpdateEntry",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/gotpOTPEntry"
+              "$ref": "#/definitions/pallasOTPEntry"
             }
           },
           "default": {
@@ -204,7 +204,7 @@
           }
         ],
         "tags": [
-          "gOTP"
+          "otp"
         ]
       }
     }
@@ -218,7 +218,7 @@
       ],
       "default": "TOTP"
     },
-    "gotpOTPEntry": {
+    "pallasOTPEntry": {
       "type": "object",
       "properties": {
         "type": {

@@ -3,34 +3,34 @@ syntax = "proto3";
 import "google/protobuf/timestamp.proto";
 import weak "google/api/annotations.proto";
 
-option go_package = "github.com/Maddosaurus/pallas/gotp";
+option go_package = "github.com/Maddosaurus/pallas/pallas";
 
-package gotp;
+package pallas;
 
-service gOTP {
+service otp {
     rpc ListEntries(UUID) returns (stream OTPEntry) {
         option (google.api.http) = {
-            get:"/v1/gotp/entries/{uuid}"
+            get:"/v1/otp/entries/{uuid}"
         };
     }
 
     rpc AddEntry(OTPEntry) returns (OTPEntry) {
         option (google.api.http) = {
-            post:"/v1/gotp/entries"
+            post:"/v1/otp/entries"
             body: "*"
         };
     }
 
     rpc UpdateEntry(OTPEntry) returns (OTPEntry) {
         option (google.api.http) = {
-            post:"/v1/gotp/entries/{uuid}"
+            post:"/v1/otp/entries/{uuid}"
             body: "*"
         };
     }
 
     rpc DeleteEntry(OTPEntry) returns (OTPEntry) {
         option (google.api.http) = {
-            delete:"/v1/gotp/entries/{uuid}"
+            delete:"/v1/otp/entries/{uuid}"
         };
     }
 }

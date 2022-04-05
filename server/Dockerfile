@@ -16,7 +16,7 @@ COPY ./go.mod ./go.sum ./
 RUN go mod download
 
 COPY . .
-RUN go build -o /gotp-server server/server.go
+RUN go build -o /pallas-server server/server.go
 
 #
 # Prod container
@@ -26,7 +26,7 @@ FROM gcr.io/distroless/static AS final
 LABEL maintainer="Maddosaurus"
 USER nonroot:nonroot
 
-COPY --from=builder --chown=nonroot:nonroot /gotp-server /gotp-server
+COPY --from=builder --chown=nonroot:nonroot /pallas-server /pallas-server
 
 EXPOSE 50051
-ENTRYPOINT [ "/gotp-server" ]
+ENTRYPOINT [ "/pallas-server" ]

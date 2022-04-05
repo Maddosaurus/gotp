@@ -3,7 +3,7 @@ syntax = "proto3";
 import "google/protobuf/timestamp.proto";
 import weak "google/api/annotations.proto";
 
-option go_package = "github.com/Maddosaurus/gotp/gotp";
+option go_package = "github.com/Maddosaurus/pallas/gotp";
 
 package gotp;
 

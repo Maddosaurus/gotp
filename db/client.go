@@ -7,8 +7,8 @@ import (
 	"log"
 	"time"
 
-	cm "github.com/Maddosaurus/gotp/lib"
-	pb "github.com/Maddosaurus/gotp/proto/gotp"
+	cm "github.com/Maddosaurus/pallas/lib"
+	pb "github.com/Maddosaurus/pallas/proto/pallas"
 	_ "github.com/jackc/pgx/v4/stdlib"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )

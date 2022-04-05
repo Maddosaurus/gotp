@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	pb "github.com/Maddosaurus/gotp/proto/gotp"
+	pb "github.com/Maddosaurus/pallas/proto/pallas"
 	"github.com/stretchr/testify/assert"
 )
 

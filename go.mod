@@ -1,4 +1,4 @@
-module github.com/Maddosaurus/gotp
+module github.com/Maddosaurus/pallas
 
 go 1.17
 

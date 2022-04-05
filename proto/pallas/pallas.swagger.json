@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "gotp/gotp.proto",
+    "title": "pallas/pallas.proto",
     "version": "version not set"
   },
   "tags": [
@@ -77,6 +77,7 @@
         "parameters": [
           {
             "name": "uuid",
+            "description": "Please use RFC-4122 compliant UUIDs (preferrably v4) only!\nSee https://datatracker.ietf.org/doc/html/rfc4122",
             "in": "path",
             "required": true,
             "type": "string"

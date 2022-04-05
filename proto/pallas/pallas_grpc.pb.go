@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.19.4
-// source: gotp/gotp.proto
+// source: pallas/pallas.proto
 
 package gotp
 
@@ -237,5 +237,5 @@ var GOTP_ServiceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 	},
-	Metadata: "gotp/gotp.proto",
+	Metadata: "pallas/pallas.proto",
 }

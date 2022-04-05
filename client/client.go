@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	pb "github.com/Maddosaurus/gotp/proto/gotp"
+	pb "github.com/Maddosaurus/pallas/proto/pallas"
 	"github.com/gofrs/uuid"
 	otp "github.com/xlzd/gotp"
 	"google.golang.org/grpc"

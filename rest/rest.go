@@ -11,8 +11,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	cm "github.com/Maddosaurus/gotp/lib"
-	gw "github.com/Maddosaurus/gotp/proto/gotp"
+	cm "github.com/Maddosaurus/pallas/lib"
+	gw "github.com/Maddosaurus/pallas/proto/pallas"
 )
 
 func run() error {

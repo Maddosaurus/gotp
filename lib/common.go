@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	pb "github.com/Maddosaurus/gotp/proto/gotp"
+	pb "github.com/Maddosaurus/pallas/proto/pallas"
 	"github.com/gofrs/uuid"
 )
 

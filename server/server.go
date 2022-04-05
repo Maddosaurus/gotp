@@ -7,9 +7,9 @@ import (
 	"log"
 	"net"
 
-	pgsql "github.com/Maddosaurus/gotp/db"
-	cm "github.com/Maddosaurus/gotp/lib"
-	pb "github.com/Maddosaurus/gotp/proto/gotp"
+	pgsql "github.com/Maddosaurus/pallas/db"
+	cm "github.com/Maddosaurus/pallas/lib"
+	pb "github.com/Maddosaurus/pallas/proto/pallas"
 	"google.golang.org/grpc"
 )
 

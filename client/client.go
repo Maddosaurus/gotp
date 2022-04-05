@@ -25,8 +25,8 @@ var (
 )
 
 // TODO: Refactor?
-func getAllEntries(client pb.GOTPClient) []pb.OTPEntry {
-	var entries []pb.OTPEntry
+func getAllEntries(client pb.GOTPClient) []*pb.OTPEntry {
+	var entries []*pb.OTPEntry
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	stream, err := client.ListEntries(ctx, &pb.UUID{Uuid: ""})
@@ -41,13 +41,19 @@ func getAllEntries(client pb.GOTPClient) []pb.OTPEntry {
 		if err != nil {
 			log.Fatalf("%v.ListEntries(_) = _, %v", client, err)
 		}
-		entries = append(entries, *entry)
+		entries = append(entries, entry)
 	}
 	return entries
 }
 
+// TODO: Refactor into lib, for common client and server (verification)
 func printEntry(client pb.GOTPClient, entry *pb.OTPEntry) {
 	log.Printf("Entry: %v // Updated at: %v", entry.Name, entry.UpdateTime.AsTime())
+	defer func() {
+		if r := recover(); r != nil {
+			log.Println("Error in printEntry: Most likely, your OTP seed is invalid!")
+		}
+	}()
 	if entry.Type == pb.OTPEntry_TOTP {
 		totp := otp.NewDefaultTOTP(entry.SecretToken)
 		log.Printf("TOTP: %v", totp.Now())
@@ -68,7 +74,7 @@ func printEntry(client pb.GOTPClient, entry *pb.OTPEntry) {
 }
 
 func printOTP(client pb.GOTPClient) {
-	var entries []pb.OTPEntry
+	var entries []*pb.OTPEntry
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	stream, err := client.ListEntries(ctx, &pb.UUID{Uuid: ""})
@@ -86,7 +92,7 @@ func printOTP(client pb.GOTPClient) {
 		if err != nil {
 			log.Fatalf("%v.ListEntries(_) = _, %v", client, err)
 		}
-		entries = append(entries, *entry)
+		entries = append(entries, entry)
 		fmt.Printf("%v - %v\n", i, entry.Name)
 		i++
 	}
@@ -101,7 +107,7 @@ func printOTP(client pb.GOTPClient) {
 		}
 
 		ini, _ := strconv.Atoi(input)
-		printEntry(client, &entries[ini])
+		printEntry(client, entries[ini])
 		break
 	}
 }
@@ -119,12 +125,13 @@ func addEntry(client pb.GOTPClient) {
 
 	fmt.Println("Seed:")
 	seed, _ := reader.ReadString('\n')
-	seed = strings.Replace(seed, "\n", "", -1)
+	seed = strings.ToUpper(strings.Replace(seed, "\n", "", -1))
 
 	new_entry := pb.OTPEntry{
 		Uuid:        uid.String(),
 		Name:        entry_name,
 		SecretToken: seed,
+		UpdateTime:  timestamppb.Now(),
 	}
 
 	fmt.Println("OTP Type (HOTP or TOTP): ")
@@ -146,12 +153,13 @@ func addEntry(client pb.GOTPClient) {
 	defer cancel()
 	_, err = client.AddEntry(ctx, &new_entry)
 	if err != nil {
-		log.Fatalf("%v.AddEntry(_) = _, %v", client, err)
+		log.Printf("%v.AddEntry(_) = _, %v", client, err)
+		log.Printf("Error! Please double-check your inputs and try again")
 	}
 }
 
 func deleteEntry(client pb.GOTPClient) {
-	var entries []pb.OTPEntry
+	var entries []*pb.OTPEntry
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	stream, err := client.ListEntries(ctx, &pb.UUID{Uuid: ""})
@@ -169,7 +177,7 @@ func deleteEntry(client pb.GOTPClient) {
 		if err != nil {
 			log.Fatalf("%v.ListEntries(_) = _, %v", client, err)
 		}
-		entries = append(entries, *entry)
+		entries = append(entries, entry)
 		fmt.Printf("%v - %v\n", i, entry.Name)
 		i++
 	}
@@ -185,7 +193,7 @@ func deleteEntry(client pb.GOTPClient) {
 
 		ini, _ := strconv.Atoi(input)
 		candidate := entries[ini]
-		client.DeleteEntry(ctx, &candidate)
+		client.DeleteEntry(ctx, candidate)
 		break
 	}
 }

@@ -6,12 +6,10 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"strings"
 
 	pgsql "github.com/Maddosaurus/gotp/db"
 	cm "github.com/Maddosaurus/gotp/lib"
 	pb "github.com/Maddosaurus/gotp/proto/gotp"
-	"github.com/gofrs/uuid"
 	"google.golang.org/grpc"
 )
 
@@ -35,7 +33,7 @@ func (s *gOTPServer) ListEntries(uuid *pb.UUID, stream pb.GOTP_ListEntriesServer
 
 func (s *gOTPServer) AddEntry(ctx context.Context, newEntry *pb.OTPEntry) (*pb.OTPEntry, error) {
 	// FIXME: Encrypt Secret!
-	if err := verifyEntry(newEntry); err != nil {
+	if err := cm.ValidateEntry(newEntry); err != nil {
 		return nil, fmt.Errorf("AddEntry: error verifying entry! %w", err)
 	}
 	if err := s.db.AddEntry(newEntry); err != nil {
@@ -49,7 +47,7 @@ func (s *gOTPServer) UpdateEntry(ctx context.Context, candidate *pb.OTPEntry) (*
 	if tes, _ := s.db.GetEntry(&candidate.Uuid); tes == nil {
 		return nil, errors.New("Update candidate not found in DB!")
 	}
-	if err := verifyEntry(candidate); err != nil {
+	if err := cm.ValidateEntry(candidate); err != nil {
 		return nil, fmt.Errorf("AddEntry: error verifying entry! %w", err)
 	}
 	if err := s.db.UpdateEntry(candidate); err != nil {
@@ -70,18 +68,6 @@ func newServer() *gOTPServer {
 	s.db = &pgsql.PgSQL{}
 	s.db.InitDB()
 	return s
-}
-
-func verifyEntry(candiate *pb.OTPEntry) error {
-	if _, err := uuid.FromString(candiate.Uuid); err != nil {
-		return fmt.Errorf("verifyEntry: failed to verify UUID: %w", err)
-	}
-	if len(candiate.SecretToken) != 16 || strings.Compare(candiate.SecretToken, strings.ToUpper(candiate.SecretToken)) != 0 {
-		return errors.New("Error while verifying token! Ensure it is 16 chars of upper case ASCII!")
-	}
-	// FIXME: Add OTP verification, but no error handling :/
-	// https://github.com/xlzd/gotp/issues/18
-	return nil
 }
 
 func main() {

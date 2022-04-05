@@ -20,7 +20,7 @@ type PgSQL struct {
 func (p *PgSQL) InitDB() (*PgSQL, error) {
 	server := cm.Getenv("PALLAS_DB_SERVER", "localhost")
 	port := cm.Getenv("PALLAS_DB_PORT", "5432")
-	db_name := cm.Getenv("PALLAS_DB_NAME", "gotp")
+	db_name := cm.Getenv("PALLAS_DB_NAME", "pallas")
 	db_user := cm.Getenv("PALLAS_DB_USER", "postgres")
 	db_pass := cm.Getenv("PALLAS_DB_PASS", "passpass")
 	retry_count := 3
@@ -62,7 +62,7 @@ func (p *PgSQL) InitDB() (*PgSQL, error) {
 }
 
 func (p *PgSQL) GetEntry(uuid *string) (*pb.OTPEntry, error) {
-	row := p.db.QueryRow("SELECT * FROM gotp WHERE uuid = $1", uuid)
+	row := p.db.QueryRow("SELECT * FROM pallas WHERE uuid = $1", uuid)
 	r := &pb.OTPEntry{}
 	t := time.Time{}
 	if err := row.Scan(&r.Uuid, &r.Type, &r.Name, &r.SecretToken, &r.Counter, &t); err != nil {
@@ -81,7 +81,7 @@ func (p *PgSQL) AddEntry(entry *pb.OTPEntry) error {
 	}
 
 	log.Printf("Serializing entry: %v", entry)
-	result, err := p.db.Exec("INSERT INTO gotp (uuid, otptype, name, secret_token, counter, update_time) VALUES ($1, $2, $3, $4, $5, $6)",
+	result, err := p.db.Exec("INSERT INTO pallas (uuid, otptype, name, secret_token, counter, update_time) VALUES ($1, $2, $3, $4, $5, $6)",
 		entry.Uuid, entry.Type, entry.Name, entry.SecretToken, entry.Counter, entry.UpdateTime.AsTime())
 	if err != nil {
 		log.Printf("Could not insert row: %v", err)
@@ -97,7 +97,7 @@ func (p *PgSQL) AddEntry(entry *pb.OTPEntry) error {
 }
 
 func (p *PgSQL) UpdateEntry(entry *pb.OTPEntry) error {
-	result, err := p.db.Exec("UPDATE gotp SET (otptype, name, secret_token, counter, update_time) = ($2, $3, $4, $5, $6) WHERE uuid = $1",
+	result, err := p.db.Exec("UPDATE pallas SET (otptype, name, secret_token, counter, update_time) = ($2, $3, $4, $5, $6) WHERE uuid = $1",
 		entry.Uuid, entry.Type, entry.Name, entry.SecretToken, entry.Counter, entry.UpdateTime.AsTime())
 	if err != nil {
 		log.Printf("Could not update row: %v", err)
@@ -113,7 +113,7 @@ func (p *PgSQL) UpdateEntry(entry *pb.OTPEntry) error {
 }
 
 func (p *PgSQL) DeleteEntry(entry *pb.OTPEntry) error {
-	result, err := p.db.Exec("DELETE FROM gotp WHERE uuid = $1", entry.Uuid)
+	result, err := p.db.Exec("DELETE FROM pallas WHERE uuid = $1", entry.Uuid)
 	if err != nil {
 		log.Printf("Could not delete row: %v", err)
 		return err
@@ -129,7 +129,7 @@ func (p *PgSQL) DeleteEntry(entry *pb.OTPEntry) error {
 
 func (p *PgSQL) GetAllEntries() ([]*pb.OTPEntry, error) {
 	otpentries := []*pb.OTPEntry{}
-	rows, err := p.db.Query("SELECT * FROM gotp")
+	rows, err := p.db.Query("SELECT * FROM pallas")
 	if err != nil {
 		log.Printf("Could not query all entries: %v", err)
 		return nil, err

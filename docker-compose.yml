@@ -10,7 +10,7 @@ services:
       - PALLAS_GRPC_SERVE_ENDPOINT=:${PALLAS_GRPC_PORT}
       - PALLAS_DB_SERVER=db
       - PALLAS_DB_PORT=5432
-      - PALLAS_DB_NAME=gotp
+      - PALLAS_DB_NAME=pallas
       - PALLAS_DB_USER=${PALLAS_DB_USERNAME}
       - PALLAS_DB_PASS=${PALLAS_DB_PASSWORD}
     ports:

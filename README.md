@@ -31,7 +31,7 @@ Name | Default | Description
 PALLAS_GRPC_SERVE_ENDPOINT | :50051 |
 PALLAS_DB_SERVER | db |
 PALLAS_DB_PORT | 5432 |
-PALLAS_DB_NAME | gotp |
+PALLAS_DB_NAME | pallas |
 PALLAS_DB_USER | postgres |
 PALLAS_DB_PASS | passpass |
 PALLAS_GRPC_ENDPOINT | server:50051" |

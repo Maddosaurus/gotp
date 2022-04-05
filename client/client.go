@@ -14,7 +14,7 @@ import (
 
 	pb "github.com/Maddosaurus/pallas/proto/pallas"
 	"github.com/gofrs/uuid"
-	otp "github.com/xlzd/gotp"
+	"github.com/xlzd/gotp"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -55,10 +55,10 @@ func printEntry(client pb.OtpClient, entry *pb.OTPEntry) {
 		}
 	}()
 	if entry.Type == pb.OTPEntry_TOTP {
-		totp := otp.NewDefaultTOTP(entry.SecretToken)
+		totp := gotp.NewDefaultTOTP(entry.SecretToken)
 		log.Printf("TOTP: %v", totp.Now())
 	} else {
-		hotp := otp.NewDefaultHOTP(entry.SecretToken)
+		hotp := gotp.NewDefaultHOTP(entry.SecretToken)
 		log.Printf("\tHOTP Mode - counter: %v", entry.Counter)
 		log.Printf("HOTP: %v", hotp.At(int(entry.Counter)))
 		entry.Counter++

@@ -9,14 +9,14 @@ import (
 )
 
 func Test_Getenv_Key(t *testing.T) {
-	key_name := "gotp_ge_key"
+	key_name := "otp_ge_key"
 	key_value := "testing_123"
 	os.Setenv(key_name, key_value)
 	assert.Equal(t, Getenv(key_name, "fallback"), key_value)
 }
 
 func Test_Getenv_Fallback(t *testing.T) {
-	key_name := "gotp_ge_key"
+	key_name := "otp_ge_key"
 	os.Unsetenv(key_name)
 	assert.Equal(t, Getenv(key_name, "fallback"), "fallback")
 }

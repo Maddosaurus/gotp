@@ -16,7 +16,7 @@ import (
 )
 
 func run() error {
-	gotp_endpoint := cm.Getenv("PALLAS_GRPC_ENDPOINT", "server:50051")
+	grpc_endpoint := cm.Getenv("PALLAS_GRPC_ENDPOINT", "server:50051")
 	serv_endpoint := cm.Getenv("PALLAS_REST_SERVE_ENDPOINT", ":8081")
 
 	ctx := context.Background()
@@ -27,7 +27,7 @@ func run() error {
 	// Note: Make sure the gRPC server is running properly and accessible
 	mux := runtime.NewServeMux()
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
-	err := gw.RegisterOtpHandlerFromEndpoint(ctx, mux, gotp_endpoint, opts)
+	err := gw.RegisterOtpHandlerFromEndpoint(ctx, mux, grpc_endpoint, opts)
 	if err != nil {
 		return err
 	}

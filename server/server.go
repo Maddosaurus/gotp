@@ -13,12 +13,12 @@ import (
 	"google.golang.org/grpc"
 )
 
-type gOTPServer struct {
+type pallasServer struct {
 	pb.UnimplementedOtpServer
 	db *pgsql.PgSQL
 }
 
-func (s *gOTPServer) ListEntries(uuid *pb.UUID, stream pb.Otp_ListEntriesServer) error {
+func (s *pallasServer) ListEntries(uuid *pb.UUID, stream pb.Otp_ListEntriesServer) error {
 	entries, err := s.db.GetAllEntries()
 	if err != nil {
 		return err
@@ -31,7 +31,7 @@ func (s *gOTPServer) ListEntries(uuid *pb.UUID, stream pb.Otp_ListEntriesServer)
 	return nil
 }
 
-func (s *gOTPServer) AddEntry(ctx context.Context, newEntry *pb.OTPEntry) (*pb.OTPEntry, error) {
+func (s *pallasServer) AddEntry(ctx context.Context, newEntry *pb.OTPEntry) (*pb.OTPEntry, error) {
 	// FIXME: Encrypt Secret!
 	if err := cm.ValidateEntry(newEntry); err != nil {
 		return nil, fmt.Errorf("AddEntry: error verifying entry! %w", err)
@@ -42,7 +42,7 @@ func (s *gOTPServer) AddEntry(ctx context.Context, newEntry *pb.OTPEntry) (*pb.O
 	return newEntry, nil
 }
 
-func (s *gOTPServer) UpdateEntry(ctx context.Context, candidate *pb.OTPEntry) (*pb.OTPEntry, error) {
+func (s *pallasServer) UpdateEntry(ctx context.Context, candidate *pb.OTPEntry) (*pb.OTPEntry, error) {
 	// FIXME: Encrypt Secret!
 	if tes, _ := s.db.GetEntry(&candidate.Uuid); tes == nil {
 		return nil, errors.New("Update candidate not found in DB!")
@@ -56,15 +56,15 @@ func (s *gOTPServer) UpdateEntry(ctx context.Context, candidate *pb.OTPEntry) (*
 	return candidate, nil
 }
 
-func (s *gOTPServer) DeleteEntry(ctx context.Context, candidate *pb.OTPEntry) (*pb.OTPEntry, error) {
+func (s *pallasServer) DeleteEntry(ctx context.Context, candidate *pb.OTPEntry) (*pb.OTPEntry, error) {
 	if err := s.db.DeleteEntry(candidate); err != nil {
 		return nil, err
 	}
 	return candidate, nil
 }
 
-func newServer() *gOTPServer {
-	s := &gOTPServer{}
+func newServer() *pallasServer {
+	s := &pallasServer{}
 	s.db = &pgsql.PgSQL{}
 	s.db.InitDB()
 	return s

@@ -23,6 +23,8 @@ func (p *PgSQL) InitDB() (*PgSQL, error) {
 	db_name := cm.Getenv("GOTP_DB_NAME", "gotp")
 	db_user := cm.Getenv("GOTP_DB_USER", "postgres")
 	db_pass := cm.Getenv("GOTP_DB_PASS", "passpass")
+	retry_count := 3
+	retry_wait_s := 3 * time.Second
 
 	connection_string := fmt.Sprintf(
 		"postgresql://%s:%s@%s:%s/%s",
@@ -31,13 +33,28 @@ func (p *PgSQL) InitDB() (*PgSQL, error) {
 
 	log.Printf("Connecting to db: postgresql://%s:[REDACTED]@%s:%s/%s", db_user, server, port, db_name)
 
-	db, err := sql.Open("pgx", connection_string)
-	if err != nil {
-		log.Fatalf("Could not connect to database: %v", err)
-		return nil, err
-	}
-	if err := db.Ping(); err != nil {
-		log.Fatalf("Unable to reach database %v", err)
+	var db *sql.DB
+	for i := 0; i <= retry_count; i++ {
+		conn, err := sql.Open("pgx", connection_string)
+		if err != nil {
+			if i < retry_count {
+				log.Printf("Could not connect to database: %v - retrying in %v", err, retry_wait_s)
+				time.Sleep(retry_wait_s)
+				continue
+			}
+			log.Fatalf("Retry limit reached, exiting!")
+			return nil, err
+		}
+		db = conn
+
+		if err := db.Ping(); err != nil {
+			if i < retry_count {
+				log.Printf("Unable to reach database: %v - retrying in %v", err, retry_wait_s)
+				time.Sleep(retry_wait_s)
+				continue
+			}
+			log.Fatalf("Retry limit reached, exiting!")
+		}
 	}
 	log.Print("Database connection established!")
 	p.db = db

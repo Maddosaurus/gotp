@@ -29,9 +29,9 @@ func getAllEntries(client pb.OtpClient) []*pb.OTPEntry {
 	var entries []*pb.OTPEntry
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	stream, err := client.ListEntries(ctx, &pb.ListEntryRequest{})
+	stream, err := client.StreamEntries(ctx, &pb.ListEntryRequest{})
 	if err != nil {
-		log.Fatalf("%v.ListEntries(_) = _, %v", client, err)
+		log.Fatalf("%v.StreamEntries(_) = _, %v", client, err)
 	}
 	for {
 		entry, err := stream.Recv()
@@ -39,7 +39,7 @@ func getAllEntries(client pb.OtpClient) []*pb.OTPEntry {
 			break
 		}
 		if err != nil {
-			log.Fatalf("%v.ListEntries(_) = _, %v", client, err)
+			log.Fatalf("%v.StreamEntries(_) = _, %v", client, err)
 		}
 		entries = append(entries, entry)
 	}
@@ -77,9 +77,9 @@ func printOTP(client pb.OtpClient) {
 	var entries []*pb.OTPEntry
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	stream, err := client.ListEntries(ctx, &pb.ListEntryRequest{})
+	stream, err := client.StreamEntries(ctx, &pb.ListEntryRequest{})
 	if err != nil {
-		log.Fatalf("%v.ListEntries(_) = _, %v", client, err)
+		log.Fatalf("%v.StreamEntries(_) = _, %v", client, err)
 	}
 	i := 0
 	reader := bufio.NewReader(os.Stdin)
@@ -90,7 +90,7 @@ func printOTP(client pb.OtpClient) {
 			break
 		}
 		if err != nil {
-			log.Fatalf("%v.ListEntries(_) = _, %v", client, err)
+			log.Fatalf("%v.StreamEntries(_) = _, %v", client, err)
 		}
 		entries = append(entries, entry)
 		fmt.Printf("%v - %v\n", i, entry.Name)
@@ -162,9 +162,9 @@ func deleteEntry(client pb.OtpClient) {
 	var entries []*pb.OTPEntry
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	stream, err := client.ListEntries(ctx, &pb.ListEntryRequest{})
+	stream, err := client.StreamEntries(ctx, &pb.ListEntryRequest{})
 	if err != nil {
-		log.Fatalf("%v.ListEntries(_) = _, %v", client, err)
+		log.Fatalf("%v.StreamEntries(_) = _, %v", client, err)
 	}
 	i := 0
 	reader := bufio.NewReader(os.Stdin)
@@ -175,7 +175,7 @@ func deleteEntry(client pb.OtpClient) {
 			break
 		}
 		if err != nil {
-			log.Fatalf("%v.ListEntries(_) = _, %v", client, err)
+			log.Fatalf("%v.StreamEntries(_) = _, %v", client, err)
 		}
 		entries = append(entries, entry)
 		fmt.Printf("%v - %v\n", i, entry.Name)

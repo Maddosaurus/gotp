@@ -22,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OtpClient interface {
-	ListEntries(ctx context.Context, in *ListEntryRequest, opts ...grpc.CallOption) (Otp_ListEntriesClient, error)
+	StreamEntries(ctx context.Context, in *ListEntryRequest, opts ...grpc.CallOption) (Otp_StreamEntriesClient, error)
 	GetAllEntries(ctx context.Context, in *ListEntryRequest, opts ...grpc.CallOption) (*GetAllEntriesResponse, error)
 	GetEntry(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*OTPEntry, error)
 	AddEntry(ctx context.Context, in *OTPEntry, opts ...grpc.CallOption) (*OTPEntry, error)
@@ -38,12 +38,12 @@ func NewOtpClient(cc grpc.ClientConnInterface) OtpClient {
 	return &otpClient{cc}
 }
 
-func (c *otpClient) ListEntries(ctx context.Context, in *ListEntryRequest, opts ...grpc.CallOption) (Otp_ListEntriesClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Otp_ServiceDesc.Streams[0], "/pallas.otp/ListEntries", opts...)
+func (c *otpClient) StreamEntries(ctx context.Context, in *ListEntryRequest, opts ...grpc.CallOption) (Otp_StreamEntriesClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Otp_ServiceDesc.Streams[0], "/pallas.otp/StreamEntries", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &otpListEntriesClient{stream}
+	x := &otpStreamEntriesClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -53,16 +53,16 @@ func (c *otpClient) ListEntries(ctx context.Context, in *ListEntryRequest, opts 
 	return x, nil
 }
 
-type Otp_ListEntriesClient interface {
+type Otp_StreamEntriesClient interface {
 	Recv() (*OTPEntry, error)
 	grpc.ClientStream
 }
 
-type otpListEntriesClient struct {
+type otpStreamEntriesClient struct {
 	grpc.ClientStream
 }
 
-func (x *otpListEntriesClient) Recv() (*OTPEntry, error) {
+func (x *otpStreamEntriesClient) Recv() (*OTPEntry, error) {
 	m := new(OTPEntry)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -119,7 +119,7 @@ func (c *otpClient) DeleteEntry(ctx context.Context, in *OTPEntry, opts ...grpc.
 // All implementations must embed UnimplementedOtpServer
 // for forward compatibility
 type OtpServer interface {
-	ListEntries(*ListEntryRequest, Otp_ListEntriesServer) error
+	StreamEntries(*ListEntryRequest, Otp_StreamEntriesServer) error
 	GetAllEntries(context.Context, *ListEntryRequest) (*GetAllEntriesResponse, error)
 	GetEntry(context.Context, *UUID) (*OTPEntry, error)
 	AddEntry(context.Context, *OTPEntry) (*OTPEntry, error)
@@ -132,8 +132,8 @@ type OtpServer interface {
 type UnimplementedOtpServer struct {
 }
 
-func (UnimplementedOtpServer) ListEntries(*ListEntryRequest, Otp_ListEntriesServer) error {
-	return status.Errorf(codes.Unimplemented, "method ListEntries not implemented")
+func (UnimplementedOtpServer) StreamEntries(*ListEntryRequest, Otp_StreamEntriesServer) error {
+	return status.Errorf(codes.Unimplemented, "method StreamEntries not implemented")
 }
 func (UnimplementedOtpServer) GetAllEntries(context.Context, *ListEntryRequest) (*GetAllEntriesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllEntries not implemented")
@@ -163,24 +163,24 @@ func RegisterOtpServer(s grpc.ServiceRegistrar, srv OtpServer) {
 	s.RegisterService(&Otp_ServiceDesc, srv)
 }
 
-func _Otp_ListEntries_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _Otp_StreamEntries_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(ListEntryRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(OtpServer).ListEntries(m, &otpListEntriesServer{stream})
+	return srv.(OtpServer).StreamEntries(m, &otpStreamEntriesServer{stream})
 }
 
-type Otp_ListEntriesServer interface {
+type Otp_StreamEntriesServer interface {
 	Send(*OTPEntry) error
 	grpc.ServerStream
 }
 
-type otpListEntriesServer struct {
+type otpStreamEntriesServer struct {
 	grpc.ServerStream
 }
 
-func (x *otpListEntriesServer) Send(m *OTPEntry) error {
+func (x *otpStreamEntriesServer) Send(m *OTPEntry) error {
 	return x.ServerStream.SendMsg(m)
 }
 
@@ -304,8 +304,8 @@ var Otp_ServiceDesc = grpc.ServiceDesc{
 	},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "ListEntries",
-			Handler:       _Otp_ListEntries_Handler,
+			StreamName:    "StreamEntries",
+			Handler:       _Otp_StreamEntries_Handler,
 			ServerStreams: true,
 		},
 	},

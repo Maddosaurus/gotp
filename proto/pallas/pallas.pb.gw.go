@@ -31,7 +31,7 @@ var _ = runtime.String
 var _ = utilities.NewDoubleArray
 var _ = metadata.Join
 
-func request_Otp_ListEntries_0(ctx context.Context, marshaler runtime.Marshaler, client OtpClient, req *http.Request, pathParams map[string]string) (Otp_ListEntriesClient, runtime.ServerMetadata, error) {
+func request_Otp_StreamEntries_0(ctx context.Context, marshaler runtime.Marshaler, client OtpClient, req *http.Request, pathParams map[string]string) (Otp_StreamEntriesClient, runtime.ServerMetadata, error) {
 	var protoReq ListEntryRequest
 	var metadata runtime.ServerMetadata
 
@@ -43,7 +43,7 @@ func request_Otp_ListEntries_0(ctx context.Context, marshaler runtime.Marshaler,
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	stream, err := client.ListEntries(ctx, &protoReq)
+	stream, err := client.StreamEntries(ctx, &protoReq)
 	if err != nil {
 		return nil, metadata, err
 	}
@@ -304,7 +304,7 @@ func local_request_Otp_DeleteEntry_0(ctx context.Context, marshaler runtime.Mars
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterOtpHandlerFromEndpoint instead.
 func RegisterOtpHandlerServer(ctx context.Context, mux *runtime.ServeMux, server OtpServer) error {
 
-	mux.Handle("POST", pattern_Otp_ListEntries_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_Otp_StreamEntries_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		err := status.Error(codes.Unimplemented, "streaming calls are not yet supported in the in-process transport")
 		_, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
@@ -472,24 +472,24 @@ func RegisterOtpHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.C
 // "OtpClient" to call the correct interceptors.
 func RegisterOtpHandlerClient(ctx context.Context, mux *runtime.ServeMux, client OtpClient) error {
 
-	mux.Handle("POST", pattern_Otp_ListEntries_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_Otp_StreamEntries_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/pallas.Otp/ListEntries", runtime.WithHTTPPathPattern("/pallas.otp/ListEntries"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/pallas.Otp/StreamEntries", runtime.WithHTTPPathPattern("/pallas.otp/StreamEntries"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Otp_ListEntries_0(ctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Otp_StreamEntries_0(ctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Otp_ListEntries_0(ctx, mux, outboundMarshaler, w, req, func() (proto.Message, error) { return resp.Recv() }, mux.GetForwardResponseOptions()...)
+		forward_Otp_StreamEntries_0(ctx, mux, outboundMarshaler, w, req, func() (proto.Message, error) { return resp.Recv() }, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -602,7 +602,7 @@ func RegisterOtpHandlerClient(ctx context.Context, mux *runtime.ServeMux, client
 }
 
 var (
-	pattern_Otp_ListEntries_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"pallas.otp", "ListEntries"}, ""))
+	pattern_Otp_StreamEntries_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"pallas.otp", "StreamEntries"}, ""))
 
 	pattern_Otp_GetAllEntries_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "otp", "entries"}, ""))
 
@@ -616,7 +616,7 @@ var (
 )
 
 var (
-	forward_Otp_ListEntries_0 = runtime.ForwardResponseStream
+	forward_Otp_StreamEntries_0 = runtime.ForwardResponseStream
 
 	forward_Otp_GetAllEntries_0 = runtime.ForwardResponseMessage
 

@@ -18,7 +18,7 @@ type pallasServer struct {
 	db *pgsql.PgSQL
 }
 
-func (s *pallasServer) ListEntries(request *pb.ListEntryRequest, stream pb.Otp_ListEntriesServer) error {
+func (s *pallasServer) StreamEntries(request *pb.ListEntryRequest, stream pb.Otp_StreamEntriesServer) error {
 	entries, err := s.db.GetAllEntries()
 	if err != nil {
 		return err

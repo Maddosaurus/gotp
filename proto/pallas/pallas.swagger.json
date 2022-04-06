@@ -17,6 +17,35 @@
   ],
   "paths": {
     "/v1/otp/entries": {
+      "get": {
+        "operationId": "otp_ListEntries",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/pallasOTPEntry"
+                },
+                "error": {
+                  "$ref": "#/definitions/rpcStatus"
+                }
+              },
+              "title": "Stream result of pallasOTPEntry"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "otp"
+        ]
+      },
       "post": {
         "operationId": "otp_AddEntry",
         "responses": {
@@ -50,21 +79,12 @@
     },
     "/v1/otp/entries/{uuid}": {
       "get": {
-        "operationId": "otp_ListEntries",
+        "operationId": "otp_GetEntry",
         "responses": {
           "200": {
-            "description": "A successful response.(streaming responses)",
+            "description": "A successful response.",
             "schema": {
-              "type": "object",
-              "properties": {
-                "result": {
-                  "$ref": "#/definitions/pallasOTPEntry"
-                },
-                "error": {
-                  "$ref": "#/definitions/rpcStatus"
-                }
-              },
-              "title": "Stream result of pallasOTPEntry"
+              "$ref": "#/definitions/pallasOTPEntry"
             }
           },
           "default": {

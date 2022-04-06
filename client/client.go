@@ -29,7 +29,7 @@ func getAllEntries(client pb.OtpClient) []*pb.OTPEntry {
 	var entries []*pb.OTPEntry
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	stream, err := client.ListEntries(ctx, &pb.UUID{Uuid: ""})
+	stream, err := client.ListEntries(ctx, &pb.ListEntryRequest{})
 	if err != nil {
 		log.Fatalf("%v.ListEntries(_) = _, %v", client, err)
 	}
@@ -77,7 +77,7 @@ func printOTP(client pb.OtpClient) {
 	var entries []*pb.OTPEntry
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	stream, err := client.ListEntries(ctx, &pb.UUID{Uuid: ""})
+	stream, err := client.ListEntries(ctx, &pb.ListEntryRequest{})
 	if err != nil {
 		log.Fatalf("%v.ListEntries(_) = _, %v", client, err)
 	}
@@ -162,7 +162,7 @@ func deleteEntry(client pb.OtpClient) {
 	var entries []*pb.OTPEntry
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	stream, err := client.ListEntries(ctx, &pb.UUID{Uuid: ""})
+	stream, err := client.ListEntries(ctx, &pb.ListEntryRequest{})
 	if err != nil {
 		log.Fatalf("%v.ListEntries(_) = _, %v", client, err)
 	}

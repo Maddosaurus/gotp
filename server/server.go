@@ -18,7 +18,7 @@ type pallasServer struct {
 	db *pgsql.PgSQL
 }
 
-func (s *pallasServer) ListEntries(uuid *pb.UUID, stream pb.Otp_ListEntriesServer) error {
+func (s *pallasServer) ListEntries(request *pb.ListEntryRequest, stream pb.Otp_ListEntriesServer) error {
 	entries, err := s.db.GetAllEntries()
 	if err != nil {
 		return err
@@ -29,6 +29,15 @@ func (s *pallasServer) ListEntries(uuid *pb.UUID, stream pb.Otp_ListEntriesServe
 		}
 	}
 	return nil
+}
+
+func (s *pallasServer) GetEntry(ctx context.Context, uuid *pb.UUID) (*pb.OTPEntry, error) {
+	//FIXME: Encrypt Secret!
+	entry, err := s.db.GetEntry(&uuid.Uuid)
+	if err != nil {
+		return nil, fmt.Errorf("GetEntry: Error getting entry! %w", err)
+	}
+	return entry, nil
 }
 
 func (s *pallasServer) AddEntry(ctx context.Context, newEntry *pb.OTPEntry) (*pb.OTPEntry, error) {

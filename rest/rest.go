@@ -16,7 +16,8 @@ import (
 )
 
 func allowedOrigin(origin string) bool {
-	//src: https://fale.io/blog/2021/07/28/cors-headers-with-grpc-gateway
+	// src: https://fale.io/blog/2021/07/28/cors-headers-with-grpc-gateway
+	// FIXME: Do *real* CORS origin check!
 
 	// if viper.GetString("cors") == "*" {
 	//     return true

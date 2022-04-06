@@ -18,21 +18,12 @@
   "paths": {
     "/v1/otp/entries": {
       "get": {
-        "operationId": "otp_ListEntries",
+        "operationId": "otp_GetAllEntries",
         "responses": {
           "200": {
-            "description": "A successful response.(streaming responses)",
+            "description": "A successful response.",
             "schema": {
-              "type": "object",
-              "properties": {
-                "result": {
-                  "$ref": "#/definitions/pallasOTPEntry"
-                },
-                "error": {
-                  "$ref": "#/definitions/rpcStatus"
-                }
-              },
-              "title": "Stream result of pallasOTPEntry"
+              "$ref": "#/definitions/pallasGetAllEntriesResponse"
             }
           },
           "default": {
@@ -237,6 +228,17 @@
         "HOTP"
       ],
       "default": "TOTP"
+    },
+    "pallasGetAllEntriesResponse": {
+      "type": "object",
+      "properties": {
+        "entries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pallasOTPEntry"
+          }
+        }
+      }
     },
     "pallasOTPEntry": {
       "type": "object",

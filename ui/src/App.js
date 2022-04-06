@@ -1,4 +1,5 @@
 import './App.css';
+import React from 'react'
 
 function App() {
   return (
@@ -9,14 +10,23 @@ function App() {
   );
 }
 
-function Home() {
-  return (
-    <>
-      <h1>Pallas</h1>
-      <p>The self-hosted OTP sync suite</p>
-    </>
-  );
-
+class Home extends React.Component {
+  render() {
+    return (
+      <>
+        <h1>Pallas</h1>
+        <p>The self-hosted OTP sync suite</p>
+      </>
+    );
+  }
+  componentDidMount() {
+    fetch("http://localhost:8081/v1/otp/entries")
+    .then (res => res.json())
+    .then((data) => {
+      this.setState({entries: data})
+    })
+    .catch(console.log)
+  }
 }
 
 function OTPEntryDetail() {

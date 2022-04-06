@@ -8,7 +8,9 @@ option go_package = "github.com/Maddosaurus/pallas/pallas";
 package pallas;
 
 service otp {
-    rpc ListEntries(ListEntryRequest) returns (stream OTPEntry) {
+    rpc ListEntries(ListEntryRequest) returns (stream OTPEntry) {}
+
+    rpc GetAllEntries(ListEntryRequest) returns (GetAllEntriesResponse) {
         option (google.api.http) = {
             get:"/v1/otp/entries"
         };
@@ -42,6 +44,10 @@ service otp {
 }
 
 message ListEntryRequest {}
+
+message GetAllEntriesResponse {
+    repeated OTPEntry entries = 1;
+}
 
 message UUID {
     // Please use RFC-4122 compliant UUIDs (preferrably v4) only!

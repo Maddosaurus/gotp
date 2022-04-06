@@ -31,6 +31,14 @@ func (s *pallasServer) ListEntries(request *pb.ListEntryRequest, stream pb.Otp_L
 	return nil
 }
 
+func (s *pallasServer) GetAllEntries(ctx context.Context, request *pb.ListEntryRequest) (*pb.GetAllEntriesResponse, error) {
+	entries, err := s.db.GetAllEntries()
+	if err != nil {
+		return nil, fmt.Errorf("GetAllEntries: Error getting entries: %w", err)
+	}
+	return &pb.GetAllEntriesResponse{Entries: entries}, nil
+}
+
 func (s *pallasServer) GetEntry(ctx context.Context, uuid *pb.UUID) (*pb.OTPEntry, error) {
 	//FIXME: Encrypt Secret!
 	entry, err := s.db.GetEntry(&uuid.Uuid)

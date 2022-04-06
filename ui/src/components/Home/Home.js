@@ -20,7 +20,6 @@ class Home extends React.Component {
     }
 
     render() {
-      const entry = this.state.entries[0]
       return (
         <>
           <h1>Pallas</h1>

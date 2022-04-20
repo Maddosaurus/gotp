@@ -8,7 +8,15 @@ option go_package = "github.com/Maddosaurus/pallas/pallas";
 package pallas;
 
 service otp {
-    rpc ListEntries(UUID) returns (stream OTPEntry) {
+    rpc StreamEntries(ListEntryRequest) returns (stream OTPEntry) {}
+
+    rpc GetAllEntries(ListEntryRequest) returns (GetAllEntriesResponse) {
+        option (google.api.http) = {
+            get:"/v1/otp/entries"
+        };
+    }
+
+    rpc GetEntry(UUID) returns (OTPEntry) {
         option (google.api.http) = {
             get:"/v1/otp/entries/{uuid}"
         };
@@ -33,6 +41,12 @@ service otp {
             delete:"/v1/otp/entries/{uuid}"
         };
     }
+}
+
+message ListEntryRequest {}
+
+message GetAllEntriesResponse {
+    repeated OTPEntry entries = 1;
 }
 
 message UUID {

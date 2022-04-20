@@ -11,6 +11,7 @@ import (
 	cm "github.com/Maddosaurus/pallas/lib"
 	pb "github.com/Maddosaurus/pallas/proto/pallas"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type pallasServer struct {
@@ -18,7 +19,7 @@ type pallasServer struct {
 	db *pgsql.PgSQL
 }
 
-func (s *pallasServer) ListEntries(uuid *pb.UUID, stream pb.Otp_ListEntriesServer) error {
+func (s *pallasServer) StreamEntries(request *pb.ListEntryRequest, stream pb.Otp_StreamEntriesServer) error {
 	entries, err := s.db.GetAllEntries()
 	if err != nil {
 		return err
@@ -29,6 +30,23 @@ func (s *pallasServer) ListEntries(uuid *pb.UUID, stream pb.Otp_ListEntriesServe
 		}
 	}
 	return nil
+}
+
+func (s *pallasServer) GetAllEntries(ctx context.Context, request *pb.ListEntryRequest) (*pb.GetAllEntriesResponse, error) {
+	entries, err := s.db.GetAllEntries()
+	if err != nil {
+		return nil, fmt.Errorf("GetAllEntries: Error getting entries: %w", err)
+	}
+	return &pb.GetAllEntriesResponse{Entries: entries}, nil
+}
+
+func (s *pallasServer) GetEntry(ctx context.Context, uuid *pb.UUID) (*pb.OTPEntry, error) {
+	//FIXME: Encrypt Secret!
+	entry, err := s.db.GetEntry(&uuid.Uuid)
+	if err != nil {
+		return nil, fmt.Errorf("GetEntry: Error getting entry! %w", err)
+	}
+	return entry, nil
 }
 
 func (s *pallasServer) AddEntry(ctx context.Context, newEntry *pb.OTPEntry) (*pb.OTPEntry, error) {
@@ -50,6 +68,7 @@ func (s *pallasServer) UpdateEntry(ctx context.Context, candidate *pb.OTPEntry) 
 	if err := cm.ValidateEntry(candidate); err != nil {
 		return nil, fmt.Errorf("AddEntry: error verifying entry! %w", err)
 	}
+	candidate.UpdateTime = timestamppb.Now() // FIXME: This works for now, but not for offline sync caps
 	if err := s.db.UpdateEntry(candidate); err != nil {
 		return nil, err
 	}

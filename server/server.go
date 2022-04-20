@@ -11,6 +11,7 @@ import (
 	cm "github.com/Maddosaurus/pallas/lib"
 	pb "github.com/Maddosaurus/pallas/proto/pallas"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type pallasServer struct {
@@ -67,6 +68,7 @@ func (s *pallasServer) UpdateEntry(ctx context.Context, candidate *pb.OTPEntry) 
 	if err := cm.ValidateEntry(candidate); err != nil {
 		return nil, fmt.Errorf("AddEntry: error verifying entry! %w", err)
 	}
+	candidate.UpdateTime = timestamppb.Now() // FIXME: This works for now, but not for offline sync caps
 	if err := s.db.UpdateEntry(candidate); err != nil {
 		return nil, err
 	}

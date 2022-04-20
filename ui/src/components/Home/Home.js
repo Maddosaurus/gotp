@@ -26,6 +26,7 @@ class Home extends React.Component {
           <p>The self-hosted OTP sync suite</p>
           <p>Currently holding {this.state.entries.length} entries:</p>
           <this.entryList entries={this.state.entries}/>
+          <p>ToDo: Investigate https://react-redux.js.org/</p>
         </>
       );
     }
